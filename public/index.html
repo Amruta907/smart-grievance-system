@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Urban Grievance & Service Response System</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>🏙️ Smart Urban Grievance System</h1>
+      <div>
+        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+        <nav>
+          <a href="/citizen-login">Citizen Login</a>
+          <a href="/authority-login">Government Portal</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Report Civic Issues. Get Solutions.</h1>
+        <p>Track potholes, street lights, waste management, and more. Our smart grievance system connects citizens with government authorities for faster resolution.</p>
+        <div class="hero-buttons">
+          <a href="/citizen-login" class="btn btn-primary">Submit a Grievance (Citizen)</a>
+          <a href="/authority-login" class="btn btn-secondary">Government Authority Portal</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" style="padding: 3rem 1rem;">
+      <div class="card-grid">
+        <div class="card">
+          <h3>📋 Report Issues</h3>
+          <p>Submit grievances with photos, location, and category. Get a unique ticket number for tracking.</p>
+        </div>
+        <div class="card">
+          <h3>📊 Track Status</h3>
+          <p>Monitor your complaint in real-time. See status updates, assigned department, and resolution progress.</p>
+        </div>
+        <div class="card">
+          <h3>✅ Rate & Feedback</h3>
+          <p>Provide feedback and ratings once resolved. Reopen if the issue persists.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+      document.querySelector('.header nav').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

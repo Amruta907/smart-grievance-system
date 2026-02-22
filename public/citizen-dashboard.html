@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7ff 0%, #eff2ff 25%, #f0f9ff 50%, #f5f7ff 75%, #eff2ff 100%);
+    }
+
+    .dashboard-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid rgba(13, 71, 161, 0.1);
+      padding-bottom: 0;
+    }
+
+    .dashboard-tabs a {
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+      color: #5c6bc0;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease-out;
+      text-decoration: none;
+      position: relative;
+    }
+
+    .dashboard-tabs a:hover {
+      color: #0d47a1;
+    }
+
+    .dashboard-tabs a.active {
+      color: #0d47a1;
+      border-bottom-color: #0d47a1;
+    }
+
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 4px 12px rgba(13, 71, 161, 0.08);
+      border: 1px solid rgba(13, 71, 161, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(13, 71, 161, 0.12);
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.blue { background: rgba(13, 71, 161, 0.1); color: #0d47a1; }
+    .stat-icon.orange { background: rgba(255, 111, 0, 0.1); color: #ff6f00; }
+    .stat-icon.purple { background: rgba(156, 39, 176, 0.1); color: #9c27b0; }
+    .stat-icon.red { background: rgba(198, 40, 40, 0.1); color: #c62828; }
+
+    .stat-content h3 {
+      font-size: 0.95rem;
+      color: #5c6bc0;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.3px;
+    }
+
+    .stat-content .number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0d47a1;
+    }
+
+    .filters-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      color: #1a237e;
+      font-size: 0.95rem;
+    }
+
+    .filter-group select {
+      padding: 0.75rem 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.95);
+      color: #1a237e;
+      cursor: pointer;
+      transition: all 0.3s ease-out;
+      min-width: 200px;
+    }
+
+    .filter-group select:hover {
+      border-color: #0d47a1;
+      box-shadow: 0 4px 12px rgba(13, 71, 161, 0.1);
+    }
+
+    .filter-group select:focus {
+      outline: none;
+      border-color: #0d47a1;
+      box-shadow: 0 0 0 4px rgba(13, 71, 161, 0.12);
+    }
+
+    .complaints-table {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(13, 71, 161, 0.08);
+      border: 1px solid rgba(13, 71, 161, 0.06);
+      overflow: hidden;
+    }
+
+    .complaints-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .complaints-table th {
+      background: linear-gradient(135deg, rgba(13, 71, 161, 0.05) 0%, rgba(0, 191, 165, 0.05) 100%);
+      padding: 1.25rem;
+      text-align: left;
+      font-weight: 700;
+      color: #1a237e;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid rgba(13, 71, 161, 0.1);
+    }
+
+    .complaints-table td {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid rgba(13, 71, 161, 0.08);
+      font-size: 0.95rem;
+      color: #424242;
+    }
+
+    .complaints-table tbody tr {
+      transition: all 0.3s ease-out;
+    }
+
+    .complaints-table tbody tr:hover {
+      background: rgba(13, 71, 161, 0.03);
+      transform: scale(1.001);
+    }
+
+    .complaints-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: capitalize;
+      letter-spacing: 0.2px;
+      border: 1px solid;
+    }
+
+    .status-submitted { background: rgba(13, 71, 161, 0.1); color: #0d47a1; border-color: rgba(13, 71, 161, 0.3); }
+    .status-open { background: rgba(255, 111, 0, 0.1); color: #ff6f00; border-color: rgba(255, 111, 0, 0.3); }
+    .status-in_progress { background: rgba(156, 39, 176, 0.1); color: #9c27b0; border-color: rgba(156, 39, 176, 0.3); }
+    .status-resolved { background: rgba(46, 125, 50, 0.1); color: #1b5e20; border-color: rgba(46, 125, 50, 0.3); }
+    .status-closed { background: rgba(46, 125, 50, 0.1); color: #1b5e20; border-color: rgba(46, 125, 50, 0.3); }
+    .status-escalated { background: rgba(198, 40, 40, 0.1); color: #b71c1c; border-color: rgba(198, 40, 40, 0.3); }
+    .status-rejected { background: rgba(198, 40, 40, 0.1); color: #b71c1c; border-color: rgba(198, 40, 40, 0.3); }
+    .status-reopened { background: rgba(255, 111, 0, 0.1); color: #ff6f00; border-color: rgba(255, 111, 0, 0.3); }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(13, 71, 161, 0.08);
+      color: #0d47a1;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.3s ease-out;
+      cursor: pointer;
+    }
+
+    .action-link:hover {
+      background: rgba(13, 71, 161, 0.15);
+      transform: translateX(3px);
+    }
+
+    .map-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(13, 71, 161, 0.08);
+      border: 1px solid rgba(13, 71, 161, 0.06);
+      margin-top: 2rem;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .map-placeholder {
+      text-align: center;
+      color: #5c6bc0;
+    }
+
+    .map-placeholder h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1a237e;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state p {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stat-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .filters-bar {
+        flex-direction: column;
+      }
+
+      .filter-group select {
+        width: 100%;
+      }
+
+      .complaints-table {
+        overflow-x: auto;
+      }
+
+      .complaints-table th,
+      .complaints-table td {
+        padding: 0.9rem 0.7rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>🏙️ Smart Urban Grievance System</h1>
+      <div>
+        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+        <nav>
+          <span id="userName" style="color: rgba(255,255,255,0.9); font-weight: 600;"></span>
+          <a href="/citizen-dashboard">Dashboard</a>
+          <a href="/submit-grievance">Submit Complaint</a>
+          <a href="#" id="logout">Logout</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" style="padding: 2rem 1rem;">
+      <div class="dashboard-header">
+        <h2>My Dashboard</h2>
+        <p style="color: var(--text-muted);">Overview of your grievance submissions</p>
+      </div>
+
+      <div id="alert" class="alert hidden"></div>
+
+      <!-- Statistics -->
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <div class="stat-icon blue">📋</div>
+          <div class="stat-content">
+            <h3>Total Complaints</h3>
+            <div class="number" id="totalComplaints">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">⏳</div>
+          <div class="stat-content">
+            <h3>Open</h3>
+            <div class="number" id="openComplaints">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">✓</div>
+          <div class="stat-content">
+            <h3>Closed</h3>
+            <div class="number" id="closedComplaints">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">⚠️</div>
+          <div class="stat-content">
+            <h3>Reopened</h3>
+            <div class="number" id="reopenedComplaints">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label>Filter by Status:</label>
+          <select id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="submitted">Submitted</option>
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="closed">Closed</option>
+            <option value="escalated">Escalated</option>
+            <option value="rejected">Rejected</option>
+            <option value="reopened">Reopened</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Filter by Category:</label>
+          <select id="categoryFilter">
+            <option value="">All Categories</option>
+            <div id="categoryOptions"></div>
+          </select>
+        </div>
+      </div>
+
+      <!-- Complaints Table -->
+      <div class="complaints-table">
+        <div id="loading" style="text-align: center; padding: 2rem;">Loading complaints...</div>
+        <div id="empty" class="hidden empty-state">
+          <p>No complaints yet</p>
+          <p><a href="/submit-grievance" class="btn btn-primary">Submit Your First Complaint</a></p>
+        </div>
+        <table id="complaintsList" class="hidden">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Category</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="complaintsBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Active Issues Map -->
+      <div class="map-section">
+        <div class="map-placeholder">
+          <h3>📍 Active Issues Map</h3>
+          <p>Geographic distribution of grievances will be displayed here</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (!isAuthenticated() || getUser()?.role !== 'citizen') {
+      window.location.href = '/citizen-login';
+    }
+
+    document.getElementById('userName').textContent = getUser()?.name || 'Citizen';
+    document.getElementById('logout').addEventListener('click', (e) => {
+      e.preventDefault();
+      logout();
+    });
+
+    let allComplaints = [];
+
+    async function loadComplaints() {
+      try {
+        const res = await apiFetch('/api/grievances/my');
+        const data = await res.json();
+        document.getElementById('loading').classList.add('hidden');
+
+        if (!res.ok) {
+          document.getElementById('empty').classList.remove('hidden');
+          document.getElementById('empty').innerHTML = '<p class="alert alert-error">Failed to load complaints. Please try again.</p>';
+          return;
+        }
+
+        allComplaints = data;
+
+        if (!data.length) {
+          document.getElementById('empty').classList.remove('hidden');
+          return;
+        }
+
+        // Update statistics
+        updateStatistics(data);
+
+        // Load categories for filter
+        loadCategoryFilter(data);
+
+        // Display complaints
+        displayComplaints(data);
+
+        document.getElementById('complaintsList').classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+        showAlert('Failed to load complaints', 'error');
+      }
+    }
+
+    function updateStatistics(data) {
+      const stats = {
+        total: data.length,
+        open: data.filter(c => c.status === 'open' || c.status === 'submitted').length,
+        closed: data.filter(c => c.status === 'resolved' || c.status === 'closed').length,
+        reopened: data.filter(c => c.status === 'reopened').length
+      };
+
+      document.getElementById('totalComplaints').textContent = stats.total;
+      document.getElementById('openComplaints').textContent = stats.open;
+      document.getElementById('closedComplaints').textContent = stats.closed;
+      document.getElementById('reopenedComplaints').textContent = stats.reopened;
+    }
+
+    function loadCategoryFilter(data) {
+      const categories = [...new Set(data.map(c => c.category_name))];
+      const select = document.getElementById('categoryFilter');
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+    }
+
+    function displayComplaints(data) {
+      const tbody = document.getElementById('complaintsBody');
+      tbody.innerHTML = '';
+
+      data.forEach(complaint => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${complaint.ticket_number}</strong></td>
+          <td>${complaint.category_name}</td>
+          <td>${complaint.department || '-'}</td>
+          <td>
+            <span class="status-badge status-${complaint.status.replace(/ /g, '_').toLowerCase()}">
+              ${complaint.status.replace(/_/g, ' ')}
+            </span>
+          </td>
+          <td>${new Date(complaint.created_at).toLocaleDateString()}</td>
+          <td>
+            <a href="/grievance/${complaint.id}" class="action-link">→</a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function showAlert(msg, type = 'error') {
+      const el = document.getElementById('alert');
+      el.textContent = msg;
+      el.className = `alert alert-${type}`;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 4000);
+    }
+
+    // Filter functionality
+    document.getElementById('statusFilter').addEventListener('change', applyFilters);
+    document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+
+    function applyFilters() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const categoryFilter = document.getElementById('categoryFilter').value;
+
+      let filtered = allComplaints;
+
+      if (statusFilter) {
+        filtered = filtered.filter(c => c.status.replace(/ /g, '_').toLowerCase() === statusFilter.toLowerCase());
+      }
+
+      if (categoryFilter) {
+        filtered = filtered.filter(c => c.category_name === categoryFilter);
+      }
+
+      displayComplaints(filtered);
+
+      if (filtered.length === 0) {
+        document.getElementById('complaintsList').classList.add('hidden');
+        document.getElementById('empty').classList.remove('hidden');
+        document.getElementById('empty').innerHTML = '<p>No complaints match your filters</p>';
+      } else {
+        document.getElementById('complaintsList').classList.remove('hidden');
+        document.getElementById('empty').classList.add('hidden');
+      }
+    }
+
+    // Load on page load
+    loadComplaints();
+
+    // Mobile menu
+    document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+      document.querySelector('.header nav').classList.toggle('open');
+    });
+  </script>
+</body>
+
+</html>

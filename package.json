@@ -1,0 +1,24 @@
+{
+  "name": "smart-urban-grievance-system",
+  "version": "1.0.0",
+  "description": "Smart Urban Grievance & Service Response System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "init-db": "node scripts/init-db.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "multer": "^2.0.2",
+    "sql.js": "^1.10.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grievance Details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7ff 0%, #eff2ff 25%, #f0f9ff 50%, #f5f7ff 75%, #eff2ff 100%);
+    }
+
+    .detail-header {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(13, 71, 161, 0.08);
+      border: 1px solid rgba(13, 71, 161, 0.06);
+      margin-bottom: 2rem;
+    }
+
+    .detail-header h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #1a237e;
+      margin-bottom: 1rem;
+    }
+
+    .detail-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .meta-item {
+      border-left: 3px solid #0d47a1;
+      padding-left: 1rem;
+    }
+
+    .meta-label {
+      font-size: 0.85rem;
+      color: #5c6bc0;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+    }
+
+    .meta-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1a237e;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: capitalize;
+      letter-spacing: 0.2px;
+      border: 1px solid;
+    }
+
+    .status-submitted { background: rgba(13, 71, 161, 0.1); color: #0d47a1; border-color: rgba(13, 71, 161, 0.3); }
+    .status-assigned { background: rgba(255, 111, 0, 0.1); color: #ff6f00; border-color: rgba(255, 111, 0, 0.3); }
+    .status-in_progress { background: rgba(156, 39, 176, 0.1); color: #9c27b0; border-color: rgba(156, 39, 176, 0.3); }
+    .status-resolved { background: rgba(46, 125, 50, 0.1); color: #1b5e20; border-color: rgba(46, 125, 50, 0.3); }
+    .status-rejected { background: rgba(198, 40, 40, 0.1); color: #b71c1c; border-color: rgba(198, 40, 40, 0.3); }
+    .status-reopened { background: rgba(255, 111, 0, 0.1); color: #ff6f00; border-color: rgba(255, 111, 0, 0.3); }
+
+    .description-box {
+      background: linear-gradient(135deg, rgba(13, 71, 161, 0.05) 0%, rgba(0, 191, 165, 0.05) 100%);
+      border-left: 4px solid #0d47a1;
+      padding: 1.5rem;
+      border-radius: 10px;
+      line-height: 1.8;
+      color: #1a237e;
+      margin: 1.5rem 0;
+    }
+
+    .detail-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 4px 12px rgba(13, 71, 161, 0.08);
+      border: 1px solid rgba(13, 71, 161, 0.06);
+      margin-bottom: 2rem;
+    }
+
+    .detail-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1a237e;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid rgba(13, 71, 161, 0.1);
+    }
+
+    .comment-item {
+      background: rgba(13, 71, 161, 0.03);
+      border-left: 3px solid #0d47a1;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .comment-author {
+      font-weight: 700;
+      color: #0d47a1;
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    .comment-time {
+      font-size: 0.8rem;
+      color: #5c6bc0;
+      margin-bottom: 0.6rem;
+    }
+
+    .comment-text {
+      color: #424242;
+      line-height: 1.6;
+    }
+
+    .images-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .image-thumb {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid rgba(13, 71, 161, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease-out;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, rgba(13, 71, 161, 0.05) 0%, rgba(0, 191, 165, 0.05) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    .image-thumb:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(13, 71, 161, 0.15);
+    }
+
+    .image-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .rating-stars {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .star {
+      font-size: 1.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      filter: opacity(0.3);
+    }
+
+    .star:hover,
+    .star.active {
+      filter: opacity(1);
+      transform: scale(1.2);
+    }
+
+    @media (max-width: 768px) {
+      .detail-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-header {
+        padding: 1.5rem;
+      }
+
+      .detail-header h2 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>🏙️ Smart Urban Grievance System</h1>
+      <div>
+        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+        <nav>
+          <a href="/citizen-dashboard">My Grievances</a>
+          <a href="/submit-grievance">Submit New</a>
+          <a href="#" id="logout">Logout</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" style="padding: 2rem 1rem;">
+      <div style="margin-bottom: 1.5rem;">
+        <a href="/citizen-dashboard" class="btn btn-outline">← Back to Dashboard</a>
+      </div>
+
+      <div id="loading" style="text-align: center; padding: 3rem;">
+        <p>Loading grievance details...</p>
+      </div>
+
+      <div id="content" class="hidden">
+        <!-- Header with Status -->
+        <div class="detail-header">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+              <h2 id="grievanceTitle"></h2>
+              <p id="ticketNumber" style="color: #5c6bc0; font-weight: 600; margin-top: 0.5rem;"></p>
+            </div>
+            <div id="statusBadge"></div>
+          </div>
+
+          <div class="detail-meta">
+            <div class="meta-item">
+              <div class="meta-label">Category</div>
+              <div class="meta-value" id="categoryValue">-</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Department</div>
+              <div class="meta-value" id="deptValue">-</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Location</div>
+              <div class="meta-value" id="locationValue">-</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Submitted</div>
+              <div class="meta-value" id="dateValue">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="detail-card">
+          <h3>📝 Description</h3>
+          <div class="description-box" id="descriptionValue"></div>
+          <div id="imagesSection"></div>
+        </div>
+
+        <!-- Resolution Details -->
+        <div id="resolutionCard" class="detail-card hidden">
+          <h3>✓ Resolution Notes</h3>
+          <div id="resolutionValue"></div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div id="feedbackSection" class="detail-card hidden">
+          <h3>⭐ Rate Your Experience</h3>
+          <form id="feedbackForm">
+            <div class="form-group">
+              <label>How satisfied are you with the resolution?</label>
+              <div class="rating-stars" id="ratingStars"></div>
+              <input type="hidden" id="rating" value="5">
+            </div>
+            <div class="form-group">
+              <label for="feedback">Additional Feedback (Optional)</label>
+              <textarea id="feedback" placeholder="Your feedback helps us improve..." style="min-height: 100px;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Feedback</button>
+          </form>
+        </div>
+
+        <!-- Reopen Section -->
+        <div id="reopenSection" class="detail-card hidden">
+          <h3>⚠️ Need to Reopen?</h3>
+          <p style="color: #5c6bc0; margin-bottom: 1rem;">If the issue hasn't been fully resolved, you can reopen this grievance.</p>
+          <button id="reopenBtn" type="button" class="btn btn-outline">Reopen Grievance</button>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="detail-card">
+          <h3>💬 Updates & Comments</h3>
+          <div id="commentsList" style="margin-bottom: 2rem;"></div>
+          <form id="commentForm">
+            <div class="form-group">
+              <label for="comment">Add Comment</label>
+              <textarea id="comment" placeholder="Ask a question or add information..." style="min-height: 100px;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (!isAuthenticated() || getUser()?.role !== 'citizen') {
+      window.location.href = '/citizen-login';
+    }
+
+    document.getElementById('logout').addEventListener('click', (e) => {
+      e.preventDefault();
+      logout();
+    });
+
+    const id = window.location.pathname.split('/').pop();
+    if (!id) window.location.href = '/citizen-dashboard';
+
+    async function loadGrievance() {
+      try {
+        const res = await apiFetch(`/api/grievances/${id}`);
+        const g = await res.json();
+        document.getElementById('loading').classList.add('hidden');
+
+        if (!res.ok) {
+          document.getElementById('content').innerHTML = '<div class="alert alert-error">Grievance not found</div>';
+          document.getElementById('content').classList.remove('hidden');
+          return;
+        }
+
+        document.getElementById('grievanceTitle').textContent = g.title || g.category_name;
+        document.getElementById('ticketNumber').textContent = `Ticket: #${g.ticket_number}`;
+        
+        const statusBadge = document.getElementById('statusBadge');
+        statusBadge.innerHTML = `<span class="status-badge status-${g.status.replace(/ /g, '_').toLowerCase()}">${g.status.replace(/_/g, ' ')}</span>`;
+
+        document.getElementById('categoryValue').textContent = g.category_name;
+        document.getElementById('deptValue').textContent = g.department || 'Not assigned';
+        document.getElementById('locationValue').textContent = g.location;
+        document.getElementById('dateValue').textContent = new Date(g.created_at).toLocaleDateString();
+        document.getElementById('descriptionValue').textContent = g.description;
+
+        // Images
+        if (g.images && g.images.length) {
+          const imagesHtml = '<h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">📸 Images</h3>' +
+            '<div class="images-gallery">' +
+            g.images.map(img => `<div class="image-thumb"><img src="${img}" alt="grievance image" loading="lazy"></div>`).join('') +
+            '</div>';
+          document.getElementById('imagesSection').innerHTML = imagesHtml;
+        }
+
+        // Resolution
+        if (g.resolution_notes) {
+          document.getElementById('resolutionValue').textContent = g.resolution_notes;
+          document.getElementById('resolutionCard').classList.remove('hidden');
+        }
+
+        // Feedback
+        if (g.status === 'resolved' || g.status === 'closed') {
+          document.getElementById('feedbackSection').classList.remove('hidden');
+          setupRatingStars();
+        }
+
+        // Reopen
+        if (g.status === 'resolved' || g.status === 'closed') {
+          document.getElementById('reopenSection').classList.remove('hidden');
+          document.getElementById('reopenBtn').addEventListener('click', reopenGrievance);
+        }
+
+        // Comments
+        loadComments(g.id);
+
+        document.getElementById('content').classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+        document.getElementById('loading').textContent = 'Error loading grievance';
+      }
+    }
+
+    function setupRatingStars() {
+      const container = document.getElementById('ratingStars');
+      for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('span');
+        star.className = 'star';
+        star.textContent = '⭐';
+        star.style.cursor = 'pointer';
+        if (i <= 5) star.classList.add('active');
+        star.addEventListener('click', () => {
+          document.getElementById('rating').value = i;
+          document.querySelectorAll('.star').forEach((s, idx) => {
+            s.classList.toggle('active', idx < i);
+          });
+        });
+        container.appendChild(star);
+      }
+    }
+
+    async function loadComments(grievanceId) {
+      const comments = []; // Load from API if available
+      const commentsList = document.getElementById('commentsList');
+      
+      if (!comments.length) {
+        commentsList.innerHTML = '<p style="color: #5c6bc0; text-align: center;">No comments yet. Be the first to add one!</p>';
+      } else {
+        commentsList.innerHTML = comments.map(c => `
+          <div class="comment-item">
+            <div class="comment-author">${c.author}</div>
+            <div class="comment-time">${new Date(c.created_at).toLocaleString()}</div>
+            <div class="comment-text">${c.text}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    async function reopenGrievance() {
+      if (!confirm('Are you sure you want to reopen this grievance?')) return;
+      
+      try {
+        const res = await apiFetch(`/api/grievances/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ status: 'reopened' })
+        });
+
+        if (res.ok) {
+          alert('Grievance reopened successfully');
+          loadGrievance();
+        } else {
+          alert('Failed to reopen grievance');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error reopening grievance');
+      }
+    }
+
+    document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      // Handle feedback submission
+      alert('Thank you for your feedback!');
+      document.getElementById('feedbackSection').classList.add('hidden');
+    });
+
+    document.getElementById('commentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      // Handle comment submission
+      alert('Comment posted!');
+      document.getElementById('comment').value = '';
+    });
+
+    // Mobile menu
+    document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+      document.querySelector('.header nav').classList.toggle('open');
+    });
+
+    loadGrievance();
+  </script>
+</body>
+</html>
+        <h2>${g.title}</h2>
+        <p style="margin: 1rem 0;">${g.description}</p>
+        <p><strong>Location:</strong> ${g.location || '-'}</p>
+        <p><strong>Priority:</strong> ${g.priority}</p>
+        ${g.resolution_notes ? `<p class="mt-2"><strong>Resolution:</strong> ${g.resolution_notes}</p>` : ''}
+        ${g.resolved_at ? `<p><strong>Resolved:</strong> ${new Date(g.resolved_at).toLocaleString()}</p>` : ''}
+      `;
+
+      if (g.status === 'resolved' && !g.citizen_rating) {
+        document.getElementById('feedbackSection').classList.remove('hidden');
+      }
+      if (g.status === 'resolved' && g.citizen_rating) {
+        document.getElementById('reopenSection').classList.remove('hidden');
+      }
+
+      document.getElementById('commentsList').innerHTML = (g.comments || []).map(c => `
+        <div style="padding: 0.75rem; border-bottom: 1px solid #eee;">
+          <strong>${c.user_name}</strong> <span style="color: var(--text-muted); font-size: 0.9rem;">${new Date(c.created_at).toLocaleString()}</span>
+          <p style="margin-top: 0.25rem;">${c.comment}</p>
+        </div>
+      `).join('') || '<p style="color: var(--text-muted);">No comments yet.</p>';
+
+      document.getElementById('rating').addEventListener('input', (e) => {
+        document.getElementById('ratingVal').textContent = e.target.value;
+      });
+
+      document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const res = await apiFetch(`/api/grievances/${id}/feedback`, {
+          method: 'POST',
+          body: JSON.stringify({
+            rating: parseInt(document.getElementById('rating').value),
+            feedback: document.getElementById('feedback').value
+          })
+        });
+        if (res.ok) {
+          document.getElementById('feedbackSection').classList.add('hidden');
+          loadGrievance();
+        }
+      });
+
+      document.getElementById('reopenBtn').addEventListener('click', async () => {
+        if (!confirm('Reopen this grievance?')) return;
+        const res = await apiFetch(`/api/grievances/${id}/reopen`, { method: 'POST' });
+        if (res.ok) loadGrievance();
+      });
+
+      document.getElementById('commentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const comment = document.getElementById('comment').value.trim();
+        if (!comment) return;
+        const res = await apiFetch(`/api/grievances/${id}/comments`, {
+          method: 'POST',
+          body: JSON.stringify({ comment })
+        });
+        if (res.ok) {
+          document.getElementById('comment').value = '';
+          loadGrievance();
+        }
+      });
+    }
+
+    loadGrievance();
+    document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+      document.querySelector('.header nav').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Login</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>🏙️ Smart Urban Grievance System</h1>
+      <div>
+        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+        <nav>
+        <a href="/">Home</a>
+        <a href="/authority-login">Government Portal</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="login-form">
+        <div class="card">
+          <h2>Citizen Portal</h2>
+          <p class="text-center mb-2" style="color: var(--text-muted);">Login or register to submit and track grievances</p>
+          
+          <div id="alert" class="alert hidden"></div>
+
+          <div id="loginForm">
+            <form id="loginFormEl">
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="••••••••">
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Login</button>
+              </div>
+            </form>
+            <div class="form-footer">
+              <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
+            </div>
+          </div>
+
+          <div id="registerForm" class="hidden">
+            <form id="registerFormEl">
+              <div class="form-group">
+                <label for="regName">Full Name</label>
+                <input type="text" id="regName" name="name" required placeholder="John Doe">
+              </div>
+              <div class="form-group">
+                <label for="regEmail">Email</label>
+                <input type="email" id="regEmail" name="email" required placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label for="regPhone">Phone (optional)</label>
+                <input type="tel" id="regPhone" name="phone" placeholder="+91 9876543210">
+              </div>
+              <div class="form-group">
+                <label for="regPassword">Password</label>
+                <input type="password" id="regPassword" name="password" required placeholder="••••••••" minlength="6">
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Register</button>
+              </div>
+            </form>
+            <div class="form-footer">
+              <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    const API_BASE = '';
+    
+    function showAlert(msg, type = 'error') {
+      const el = document.getElementById('alert');
+      el.textContent = msg;
+      el.className = `alert alert-${type}`;
+      el.classList.remove('hidden');
+    }
+
+    function hideAlert() {
+      document.getElementById('alert').classList.add('hidden');
+    }
+
+    document.getElementById('showRegister').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('registerForm').classList.remove('hidden');
+      hideAlert();
+    });
+
+    document.getElementById('showLogin').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('registerForm').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+      hideAlert();
+    });
+
+    document.getElementById('loginFormEl').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/citizen/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+        saveAuth(data);
+        window.location.href = '/citizen-dashboard';
+      } catch (err) {
+        showAlert(err.message);
+      }
+    });
+
+    document.getElementById('registerFormEl').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+      const name = document.getElementById('regName').value;
+      const email = document.getElementById('regEmail').value;
+      const phone = document.getElementById('regPhone').value;
+      const password = document.getElementById('regPassword').value;
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/citizen/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, phone, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Registration failed');
+        saveAuth(data);
+        window.location.href = '/citizen-dashboard';
+      } catch (err) {
+        showAlert(err.message);
+      }
+    });
+
+    function saveAuth(data) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+    }
+    document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+      document.querySelector('.header nav').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

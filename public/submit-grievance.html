@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Grievance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/submit-grievance.css">
+</head>
+
+<body class="submit-page">
+  <header class="header">
+    <div class="container">
+      <h1>🏙️ Smart Urban Grievance System</h1>
+      <div>
+        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+        <nav>
+          <a href="/citizen-dashboard">My Grievances</a>
+          <a href="/submit-grievance">Submit New</a>
+          <a href="#" id="logout">Logout</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="submit-main">
+    <div class="container submit-grievance-container">
+      <div class="submit-header">
+        <div class="submit-header-icon">✍️</div>
+        <h2>Report an Issue</h2>
+        <p>Describe the civic problem and we'll try to solve it</p>
+      </div>
+
+      <div id="alert" class="alert hidden"></div>
+
+      <div class="submit-card">
+        <form id="grievanceForm">
+          <div class="form-group">
+            <label for="category">What type of issue?</label>
+            <div class="select-wrapper">
+              <select id="category" name="category_id" required>
+                <option value="">Choose a category</option>
+              </select>
+              <span class="select-arrow">▼</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="Name">Enter your name</label>
+            <input type="text" id="name" name="name" required placeholder="Enter your full name" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Mobile Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter mobile number" pattern="[0-9]{10}" required />
+          </div>
+          <div class="form-group">
+            <label for="description">Describe the issue</label>
+            <div class="description-field">
+              <textarea id="description" name="description" required
+                placeholder="Type or use the mic to speak your description..."></textarea>
+              <button type="button" id="voiceBtn" class="voice-btn" title="Speak to describe">
+                <span class="voice-icon">🎤</span>
+                <span class="voice-label">Use voice</span>
+              </button>
+            </div>
+            <p class="field-hint">Type or tap the mic to speak. You can edit the text after.</p>
+          </div>
+          <div class="form-group">
+            <label for="images">Upload Photos (Optional)</label>
+            <input type="file" id="images" name="images" accept="image/*" multiple capture="environment" />
+            <p class="field-hint">
+              You can select multiple photos or use camera.
+            </p>
+          </div>
+          <div class="form-group location-group">
+            <label for="location">Where is it?</label>
+            <div class="location-field">
+              <input type="text" id="location" name="location" required placeholder="Type address or use GPS to detect">
+              <button type="button" id="trackLocationBtn" class="location-gps-btn" title="Use my current location">
+                <span class="gps-icon">📍</span>
+                <span class="gps-label">Use GPS</span>
+              </button>
+            </div>
+            <div id="locationStatus" class="location-status"></div>
+            <p class="location-hint">Type your address or use GPS. You can edit the result if needed.</p>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary submit-btn">
+              <span>Submit Report</span>
+              <span class="btn-arrow">→</span>
+            </button>
+            <a href="/citizen-dashboard" class="btn btn-ghost">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (!isAuthenticated() || getUser()?.role !== 'citizen') {
+      window.location.href = '/citizen-login';
+    }
+
+    document.getElementById('logout').addEventListener('click', (e) => {
+      e.preventDefault();
+      logout();
+    });
+
+    async function loadCategories() {
+      const res = await fetch('/api/categories');
+      const cats = await res.json();
+      const sel = document.getElementById('category');
+      cats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.name} (${c.department})`;
+        sel.appendChild(opt);
+      });
+    }
+
+    function showAlert(msg, type = 'error') {
+      const el = document.getElementById('alert');
+      el.textContent = msg;
+      el.className = `alert alert-${type}`;
+      el.classList.remove('hidden');
+    }
+
+    function formatAddress(data) {
+      const a = data.address || {};
+      const parts = [];
+      const street = [a.house_number, a.road].filter(Boolean).join(' ');
+      if (street) parts.push(street);
+      const area = a.suburb || a.neighbourhood || a.village || a.hamlet || a.locality;
+      if (area && !parts.includes(area)) parts.push(area);
+      const district = a.city_district || a.district || a.borough || a.subdivision;
+      if (district && !parts.includes(district)) parts.push(district);
+      const city = a.city || a.town || a.municipality;
+      if (city && !parts.includes(city)) parts.push(city);
+      const state = a.state || a.state_district || a.county;
+      if (state && !parts.includes(state)) parts.push(state);
+      if (a.postcode) parts.push(a.postcode);
+      if (a.country) parts.push(a.country);
+      return parts.length ? parts.join(', ') : null;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+    }
+
+    document.getElementById('voiceBtn').addEventListener('click', () => {
+      const btn = document.getElementById('voiceBtn');
+      const desc = document.getElementById('description');
+      if (!recognition) {
+        showAlert('Voice input is not supported in your browser. Try Chrome or Edge.');
+        return;
+      }
+      if (btn.classList.contains('listening')) {
+        recognition.stop();
+        btn.classList.remove('listening');
+        btn.querySelector('.voice-label').textContent = 'Use voice';
+        return;
+      }
+      btn.classList.add('listening');
+      btn.querySelector('.voice-label').textContent = 'Stop';
+      recognition.onresult = (e) => {
+        const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+        desc.value = (desc.value ? desc.value + ' ' : '') + transcript;
+      };
+      recognition.onend = () => {
+        btn.classList.remove('listening');
+        btn.querySelector('.voice-label').textContent = 'Use voice';
+      };
+      recognition.onerror = (e) => {
+        btn.classList.remove('listening');
+        btn.querySelector('.voice-label').textContent = 'Use voice';
+        if (e.error !== 'aborted') showAlert('Could not hear. Try again or type.');
+      };
+      recognition.start();
+    });
+
+    document.getElementById('trackLocationBtn').addEventListener('click', () => {
+      const btn = document.getElementById('trackLocationBtn');
+      const status = document.getElementById('locationStatus');
+      btn.disabled = true;
+      status.textContent = 'Getting location...';
+      status.className = 'location-status';
+      status.classList.remove('success', 'error');
+      if (!navigator.geolocation) {
+        status.textContent = 'GPS not supported by your browser';
+        status.classList.add('error');
+        btn.disabled = false;
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          try {
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1&zoom=18`,
+              { headers: { 'Accept-Language': 'en', 'User-Agent': 'SmartGrievanceApp/1.0' } }
+            );
+            const data = await res.json();
+            const addr = formatAddress(data) || data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            document.getElementById('location').value = addr;
+            document.getElementById('location').dataset.lat = lat;
+            document.getElementById('location').dataset.lng = lng;
+            status.textContent = '✓ Location captured. Edit below if needed.';
+            status.classList.add('success');
+          } catch (e) {
+            const coords = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            document.getElementById('location').value = coords;
+            document.getElementById('location').dataset.lat = lat;
+            document.getElementById('location').dataset.lng = lng;
+            status.textContent = '✓ Coordinates captured. Add address details above.';
+            status.classList.add('success');
+          }
+          btn.disabled = false;
+        },
+        (err) => {
+          status.textContent = err.message || 'Could not get location. Try manual entry.';
+          status.classList.add('error');
+          btn.disabled = false;
+        }
+      );
+    });
+
+    document.getElementById('grievanceForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const categoryVal = document.getElementById('category').value;
+      const descVal = document.getElementById('description').value.trim();
+      const locationInput = document.getElementById('location');
+      const locationVal = locationInput.value.trim();
+      if (!categoryVal) {
+        showAlert('Please select a category');
+        return;
+      }
+      if (!descVal) {
+        showAlert('Please describe the issue');
+        return;
+      }
+      if (!locationVal) {
+        showAlert('Please enter location or use GPS to detect');
+        return;
+      }
+      showAlert('', 'info');
+      // Create FormData
+      const formData = new FormData();
+
+      // Add text fields
+      formData.append(
+        'category_id',
+        document.getElementById('category').value
+      );
+
+      formData.append('name', document.getElementById('name').value);
+      formData.append('email', document.getElementById('email').value);
+      formData.append('phone', document.getElementById('phone').value);
+
+      formData.append('description', descVal);
+      formData.append('location', locationVal);
+
+      // Add coordinates
+      if (locationInput.dataset.lat) {
+        formData.append('latitude', locationInput.dataset.lat);
+      }
+
+      if (locationInput.dataset.lng) {
+        formData.append('longitude', locationInput.dataset.lng);
+      }
+
+      // Add images
+      const files = document.getElementById('images').files;
+
+      for (let i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+      }
+
+      // Send request
+      const res = await apiFetch('/api/grievances', {
+        method: 'POST',
+        body: formData
+      });
+      let result;
+      try {
+        try {
+          result = await res.json();
+        } catch (parseErr) {
+          throw new Error(res.status === 401 ? 'Session expired. Please log in again.' : `Server error (${res.status}). Try again.`);
+        }
+        if (!res.ok) {
+          const msg = result?.error || (res.status === 401 ? 'Session expired. Please log in again.' : 'Submit failed');
+          throw new Error(msg);
+        }
+        showAlert(`Grievance submitted! Ticket: ${result.ticket_number}`, 'success');
+        document.getElementById('grievanceForm').reset();
+        document.getElementById('locationStatus').textContent = '';
+        document.getElementById('locationStatus').className = 'location-status';
+        setTimeout(() => window.location.href = '/citizen-dashboard', 2000);
+      } catch (err) {
+        showAlert(err.message);
+      }
+    });
+
+    loadCategories();
+    document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+      document.querySelector('.header nav').classList.toggle('open');
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authority Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7ff 0%, #eff2ff 25%, #f0f9ff 50%, #f5f7ff 75%, #eff2ff 100%);
+    }
+
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 4px 12px rgba(13, 71, 161, 0.08);
+      border: 1px solid rgba(13, 71, 161, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(13, 71, 161, 0.12);
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.blue { background: rgba(13, 71, 161, 0.1); color: #0d47a1; }
+    .stat-icon.orange { background: rgba(255, 111, 0, 0.1); color: #ff6f00; }
+    .stat-icon.purple { background: rgba(156, 39, 176, 0.1); color: #9c27b0; }
+    .stat-icon.green { background: rgba(46, 125, 50, 0.1); color: #2e7d32; }
+
+    .stat-content h3 {
+      font-size: 0.95rem;
+      color: #5c6bc0;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.3px;
+    }
+
+    .stat-content .number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0d47a1;
+    }
+
+    .filters-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      color: #1a237e;
+      font-size: 0.9rem;
+      letter-spacing: 0.2px;
+    }
+
+    .filter-group select {
+      padding: 0.75rem 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.95);
+      color: #1a237e;
+      cursor: pointer;
+      transition: all 0.3s ease-out;
+      min-width: 220px;
+    }
+
+    .filter-group select:hover {
+      border-color: #0d47a1;
+      box-shadow: 0 4px 12px rgba(13, 71, 161, 0.1);
+    }
+
+    .filter-group select:focus {
+      outline: none;
+      border-color: #0d47a1;
+      box-shadow: 0 0 0 4px rgba(13, 71, 161, 0.12);
+    }
+
+    .grievances-table {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(13, 71, 161, 0.08);
+      border: 1px solid rgba(13, 71, 161, 0.06);
+      overflow: hidden;
+    }
+
+    .grievances-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .grievances-table th {
+      background: linear-gradient(135deg, rgba(13, 71, 161, 0.05) 0%, rgba(0, 191, 165, 0.05) 100%);
+      padding: 1.25rem;
+      text-align: left;
+      font-weight: 700;
+      color: #1a237e;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid rgba(13, 71, 161, 0.1);
+    }
+
+    .grievances-table td {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid rgba(13, 71, 161, 0.08);
+      font-size: 0.95rem;
+      color: #424242;
+    }
+
+    .grievances-table tbody tr {
+      transition: all 0.3s ease-out;
+      cursor: pointer;
+    }
+
+    .grievances-table tbody tr:hover {
+      background: rgba(13, 71, 161, 0.03);
+      transform: scale(1.001);
+    }
+
+    .grievances-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: capitalize;
+      letter-spacing: 0.2px;
+      border: 1px solid;
+    }
+
+    .status-submitted { background: rgba(13, 71, 161, 0.1); color: #0d47a1; border-color: rgba(13, 71, 161, 0.3); }
+    .status-assigned { background: rgba(255, 111, 0, 0.1); color: #ff6f00; border-color: rgba(255, 111, 0, 0.3); }
+    .status-in_progress { background: rgba(156, 39, 176, 0.1); color: #9c27b0; border-color: rgba(156, 39, 176, 0.3); }
+    .status-resolved { background: rgba(46, 125, 50, 0.1); color: #1b5e20; border-color: rgba(46, 125, 50, 0.3); }
+    .status-rejected { background: rgba(198, 40, 40, 0.1); color: #b71c1c; border-color: rgba(198, 40, 40, 0.3); }
+    .status-reopened { background: rgba(255, 111, 0, 0.1); color: #ff6f00; border-color: rgba(255, 111, 0, 0.3); }
+
+    .priority-badge {
+      display: inline-block;
+      padding: 0.4rem 0.9rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      border: 1px solid;
+    }
+
+    .priority-low { background: rgba(76, 175, 80, 0.1); color: #388e3c; border-color: rgba(76, 175, 80, 0.3); }
+    .priority-medium { background: rgba(255, 193, 7, 0.1); color: #f57f17; border-color: rgba(255, 193, 7, 0.3); }
+    .priority-high { background: rgba(255, 111, 0, 0.1); color: #e65100; border-color: rgba(255, 111, 0, 0.3); }
+    .priority-urgent { background: rgba(198, 40, 40, 0.1); color: #b71c1c; border-color: rgba(198, 40, 40, 0.3); }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(13, 71, 161, 0.08);
+      color: #0d47a1;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.3s ease-out;
+    }
+
+    .action-btn:hover {
+      background: rgba(13, 71, 161, 0.15);
+      transform: scale(1.1);
+    }
+
+    /* Modal */
+    #modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+      backdrop-filter: blur(4px);
+    }
+
+    #modal.open {
+      display: flex;
+    }
+
+    #modal .card {
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 16px;
+      animation: scaleIn 0.3s ease-out;
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-header {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #1a237e;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid rgba(13, 71, 161, 0.1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #5c6bc0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #0d47a1;
+      transform: scale(1.2);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state p {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stat-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .filters-bar {
+        flex-direction: column;
+      }
+
+      .filter-group select {
+        width: 100%;
+      }
+
+      .grievances-table th,
+      .grievances-table td {
+        padding: 0.9rem 0.7rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>🏙️ Smart Urban Grievance System</h1>
+      <div>
+        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+        <nav>
+          <span id="userName" style="color: rgba(255,255,255,0.9); font-weight: 600;"></span>
+          <a href="/authority-dashboard">Dashboard</a>
+          <a href="#" id="logout">Logout</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" style="padding: 2rem 1rem;">
+      <div class="dashboard-header">
+        <h2>Grievance Management</h2>
+        <p style="color: var(--text-muted);">View, manage and resolve all citizen grievances</p>
+      </div>
+
+      <!-- Statistics -->
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <div class="stat-icon blue">📋</div>
+          <div class="stat-content">
+            <h3>Total Grievances</h3>
+            <div class="number" id="totalGrievances">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">⏳</div>
+          <div class="stat-content">
+            <h3>Pending</h3>
+            <div class="number" id="pendingGrievances">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">⚙️</div>
+          <div class="stat-content">
+            <h3>In Progress</h3>
+            <div class="number" id="inProgressGrievances">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">✓</div>
+          <div class="stat-content">
+            <h3>Resolved</h3>
+            <div class="number" id="resolvedGrievances">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label>Filter by Status:</label>
+          <select id="filterStatus">
+            <option value="">All Status</option>
+            <option value="submitted">Submitted</option>
+            <option value="assigned">Assigned</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="rejected">Rejected</option>
+            <option value="reopened">Reopened</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Filter by Department:</label>
+          <select id="filterDept">
+            <option value="">All Departments</option>
+            <option value="Public Works">Public Works</option>
+            <option value="Water Supply">Water Supply</option>
+            <option value="Sanitation">Sanitation</option>
+            <option value="Electricity Board">Electricity Board</option>
+            <option value="Transport">Transport</option>
+            <option value="Urban Development">Urban Development</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <button class="btn btn-primary" id="applyFilters">Apply Filters</button>
+        </div>
+      </div>
+
+      <!-- Grievances Table -->
+      <div class="grievances-table">
+        <div id="loading" style="text-align: center; padding: 2rem;">Loading grievances...</div>
+        <div id="empty" class="hidden empty-state">
+          <p>No grievances found</p>
+        </div>
+        <table id="grievancesList" class="hidden">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Category</th>
+              <th>Citizen</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Department</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="grievancesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal">
+    <div class="card" style="position: relative;">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-header">Grievance Details</div>
+      <div id="modalBody"></div>
+      <form id="updateForm" style="margin-top: 1.5rem; border-top: 2px solid rgba(13, 71, 161, 0.1); padding-top: 1.5rem;">
+        <div class="form-group">
+          <label for="modalStatus">Update Status:</label>
+          <select id="modalStatus">
+            <option value="submitted">Submitted</option>
+            <option value="assigned">Assigned</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="rejected">Rejected</option>
+            <option value="reopened">Reopened</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="modalDept">Assign Department:</label>
+          <input type="text" id="modalDept" placeholder="e.g., Public Works">
+        </div>
+        <div class="form-group">
+          <label for="modalPriority">Priority:</label>
+          <select id="modalPriority">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="modalNotes">Resolution Notes:</label>
+          <textarea id="modalNotes" placeholder="Add resolution details" style="min-height: 100px;"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (!isAuthenticated() || getUser()?.role !== 'authority') {
+      window.location.href = '/authority-login';
+    }
+
+    document.getElementById('userName').textContent = getUser()?.name || 'Authority';
+    document.getElementById('logout').addEventListener('click', (e) => {
+      e.preventDefault();
+      logout();
+    });
+
+    let allGrievances = [];
+    let currentGrievance = null;
+
+    async function loadGrievances() {
+      try {
+        const res = await apiFetch('/api/grievances');
+        const data = await res.json();
+        document.getElementById('loading').classList.add('hidden');
+
+        if (!res.ok) {
+          document.getElementById('empty').classList.remove('hidden');
+          return;
+        }
+
+        allGrievances = data;
+        updateStatistics(data);
+        displayGrievances(data);
+        document.getElementById('grievancesList').classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+        document.getElementById('empty').classList.remove('hidden');
+      }
+    }
+
+    function updateStatistics(data) {
+      const stats = {
+        total: data.length,
+        pending: data.filter(g => g.status === 'submitted' || g.status === 'assigned').length,
+        inProgress: data.filter(g => g.status === 'in_progress').length,
+        resolved: data.filter(g => g.status === 'resolved').length
+      };
+
+      document.getElementById('totalGrievances').textContent = stats.total;
+      document.getElementById('pendingGrievances').textContent = stats.pending;
+      document.getElementById('inProgressGrievances').textContent = stats.inProgress;
+      document.getElementById('resolvedGrievances').textContent = stats.resolved;
+    }
+
+    function displayGrievances(data) {
+      const tbody = document.getElementById('grievancesBody');
+      tbody.innerHTML = '';
+
+      data.forEach(grievance => {
+        const tr = document.createElement('tr');
+        const priority = grievance.priority || 'medium';
+        tr.innerHTML = `
+          <td><strong>${grievance.ticket_number}</strong></td>
+          <td>${grievance.category_name}</td>
+          <td>${grievance.citizen_name}</td>
+          <td>
+            <span class="status-badge status-${grievance.status.replace(/ /g, '_').toLowerCase()}">
+              ${grievance.status.replace(/_/g, ' ')}
+            </span>
+          </td>
+          <td>
+            <span class="priority-badge priority-${priority}">
+              ${priority}
+            </span>
+          </td>
+          <td>${grievance.department || '-'}</td>
+          <td>
+            <button type="button" class="action-btn" onclick="openModal(${grievance.id})">📋</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openModal(grievanceId) {
+      currentGrievance = allGrievances.find(g => g.id === grievanceId);
+      if (!currentGrievance) return;
+
+      const body = document.getElementById('modalBody');
+      body.innerHTML = `
+        <div style="margin-bottom: 1rem;">
+          <p><strong>Ticket:</strong> ${currentGrievance.ticket_number}</p>
+          <p><strong>Category:</strong> ${currentGrievance.category_name}</p>
+          <p><strong>Citizen:</strong> ${currentGrievance.citizen_name} (${currentGrievance.citizen_email})</p>
+          <p><strong>Location:</strong> ${currentGrievance.location}</p>
+          <p><strong>Date:</strong> ${new Date(currentGrievance.created_at).toLocaleDateString()}</p>
+          <p><strong>Description:</strong></p>
+          <p style="color: #5c6bc0; background: rgba(13, 71, 161, 0.05); padding: 1rem; border-radius: 10px;">${currentGrievance.description}</p>
+        </div>
+      `;
+
+      document.getElementById('modalStatus').value = currentGrievance.status;
+      document.getElementById('modalDept').value = currentGrievance.department || '';
+      document.getElementById('modalPriority').value = currentGrievance.priority || 'medium';
+      document.getElementById('modalNotes').value = currentGrievance.resolution_notes || '';
+
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+
+    document.getElementById('updateForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const updateData = {
+        status: document.getElementById('modalStatus').value,
+        department: document.getElementById('modalDept').value,
+        priority: document.getElementById('modalPriority').value,
+        resolution_notes: document.getElementById('modalNotes').value
+      };
+
+      try {
+        const res = await apiFetch(`/api/grievances/${currentGrievance.id}`, {
+          method: 'PUT',
+          body: JSON.stringify(updateData)
+        });
+
+        if (res.ok) {
+          closeModal();
+          loadGrievances();
+          showAlert('Grievance updated successfully', 'success');
+        } else {
+          showAlert('Failed to update grievance', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showAlert('Error updating grievance', 'error');
+      }
+    });
+
+    function showAlert(msg, type = 'error') {
+      // Simple alert - can be enhanced with toast notifications
+      console.log(`${type}: ${msg}`);
+    }
+
+    document.getElementById('applyFilters').addEventListener('click', () => {
+      const status = document.getElementById('filterStatus').value;
+      const dept = document.getElementById('filterDept').value;
+
+      let filtered = allGrievances;
+
+      if (status) {
+        filtered = filtered.filter(g => g.status === status);
+      }
+
+      if (dept) {
+        filtered = filtered.filter(g => g.department === dept);
+      }
+
+      if (filtered.length === 0) {
+        document.getElementById('grievancesList').classList.add('hidden');
+        document.getElementById('empty').classList.remove('hidden');
+      } else {
+        displayGrievances(filtered);
+        document.getElementById('grievancesList').classList.remove('hidden');
+        document.getElementById('empty').classList.add('hidden');
+      }
+    });
+
+    // Load on page load
+    loadGrievances();
+
+    // Mobile menu
+    document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+      document.querySelector('.header nav').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Update</button>
+          <button type="button" class="btn btn-outline" id="closeModal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (!isAuthenticated() || getUser()?.role !== 'authority') {
+      window.location.href = '/authority-login';
+    }
+
+    document.getElementById('userName').textContent = getUser()?.name || 'Authority';
+    document.getElementById('logout').addEventListener('click', (e) => {
+      e.preventDefault();
+      logout();
+    });
+
+    let currentGrievanceId = null;
+
+    async function loadStats() {
+      const res = await apiFetch('/api/authority/dashboard');
+      const data = await res.json();
+      if (!res.ok) return;
+      const byStatus = (data.byStatus || []).reduce((o, s) => ({ ...o, [s.status]: s.count }), {});
+      document.getElementById('stats').innerHTML = `
+        <div class="stat-card">
+          <div class="number">${data.total || 0}</div>
+          <div class="label">Total</div>
+        </div>
+        <div class="stat-card">
+          <div class="number">${byStatus.submitted || 0}</div>
+          <div class="label">Submitted</div>
+        </div>
+        <div class="stat-card">
+          <div class="number">${byStatus.in_progress || 0}</div>
+          <div class="label">In Progress</div>
+        </div>
+        <div class="stat-card">
+          <div class="number">${data.resolved || 0}</div>
+          <div class="label">Resolved</div>
+        </div>
+      `;
+    }
+
+    async function loadGrievances() {
+      document.getElementById('loading').classList.remove('hidden');
+      document.getElementById('list').classList.add('hidden');
+      const status = document.getElementById('filterStatus').value;
+      const dept = document.getElementById('filterDept').value;
+      const params = new URLSearchParams();
+      if (status) params.set('status', status);
+      if (dept) params.set('department', dept);
+      const res = await apiFetch('/api/authority/grievances?' + params);
+      const data = await res.json();
+      document.getElementById('loading').classList.add('hidden');
+      if (!res.ok) return;
+      document.getElementById('list').classList.remove('hidden');
+      document.getElementById('list').innerHTML = data.grievances.map(g => `
+        <div class="grievance-item">
+          <div class="grievance-meta">
+            <strong>#${g.ticket_number}</strong>
+            <span>${g.title}</span>
+            <span class="badge badge-${g.status.replace('_','')}">${g.status.replace('_',' ')}</span>
+            <span>${g.category_name}</span>
+            <span>${g.citizen_name || '-'}</span>
+            <span>${new Date(g.created_at).toLocaleDateString()}</span>
+          </div>
+          <p style="font-size: 0.95rem; color: var(--text-muted);">${g.description.substring(0, 100)}${g.description.length > 100 ? '...' : ''}</p>
+          <div class="grievance-actions">
+            <button class="btn btn-sm btn-primary view-btn" data-id="${g.id}">View & Update</button>
+          </div>
+        </div>
+      `).join('') || '<p style="padding: 2rem; text-align: center; color: var(--text-muted);">No grievances found.</p>';
+
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', () => openModal(btn.dataset.id));
+      });
+    }
+
+    async function openModal(id) {
+      currentGrievanceId = id;
+      const res = await apiFetch(`/api/grievances/${id}`);
+      const g = await res.json();
+      if (!res.ok) return;
+      document.getElementById('modalTitle').textContent = `#${g.ticket_number} - ${g.title}`;
+      document.getElementById('modalBody').innerHTML = `
+        <p><strong>Category:</strong> ${g.category_name} | <strong>Department:</strong> ${g.department || '-'}</p>
+        <p><strong>Citizen:</strong> ${g.citizen_name || '-'} | <strong>Location:</strong> ${g.location || '-'}</p>
+        <p><strong>Description:</strong> ${g.description}</p>
+        ${g.resolution_notes ? `<p><strong>Resolution:</strong> ${g.resolution_notes}</p>` : ''}
+      `;
+      document.getElementById('modalStatus').value = g.status;
+      document.getElementById('modalDept').value = g.department || '';
+      document.getElementById('modalPriority').value = g.priority || 'medium';
+      document.getElementById('modalNotes').value = g.resolution_notes || '';
+      document.getElementById('modalComment').value = '';
+      const modal = document.getElementById('modal');
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+      modal.style.alignItems = 'center';
+      modal.style.justifyContent = 'center';
+    }
+
+    document.getElementById('closeModal').addEventListener('click', () => {
+      const modal = document.getElementById('modal');
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+    });
+
+    document.getElementById('updateForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const status = document.getElementById('modalStatus').value;
+      const department = document.getElementById('modalDept').value;
+      const priority = document.getElementById('modalPriority').value;
+      const resolution_notes = document.getElementById('modalNotes').value;
+      const comment = document.getElementById('modalComment').value.trim();
+
+      const res = await apiFetch(`/api/authority/grievances/${currentGrievanceId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status, department: department || undefined, priority, resolution_notes })
+      });
+      if (!res.ok) return;
+
+      if (comment) {
+        await apiFetch(`/api/grievances/${currentGrievanceId}/comments`, {
+          method: 'POST',
+          body: JSON.stringify({ comment })
+        });
+      }
+      document.getElementById('closeModal').click();
+      loadStats();
+      loadGrievances();
+    });
+
+    document.getElementById('applyFilters').addEventListener('click', loadGrievances);
+
+    loadStats();
+    loadGrievances();
+    document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+      document.querySelector('.header nav').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
