@@ -197,18 +197,73 @@
 </head>
 <body>
   <header class="header">
-    <div class="container">
-      <h1>🏙️ Smart Urban Grievance System</h1>
-      <div>
-        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
-        <nav>
-          <a href="/citizen-dashboard">My Grievances</a>
-          <a href="/submit-grievance">Submit New</a>
-          <a href="#" id="logout">Logout</a>
-        </nav>
+  <div class="container">
+    <div class="header-left">
+      <div class="logo-section">
+        <div class="logo-icon"><svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background -->
+  <rect
+    x="2"
+    y="2"
+    width="96"
+    height="96"
+    rx="20"
+    ry="20"
+    fill="#0A4C84"
+  />
+
+  <!-- Shield Outline -->
+  <path
+    d="M50 22
+       C60 30, 72 30, 72 30
+       V55
+       C72 70, 60 80, 50 85
+       C40 80, 28 70, 28 55
+       V30
+       C28 30, 40 30, 50 22Z"
+    fill="none"
+    stroke="white"
+    stroke-width="6"
+    stroke-linejoin="round"
+  />
+
+</svg></div>
+        <div class="logo-text">
+          <span class="brand-name">NagarSeva</span>
+          <span class="brand-tagline">SMART GRIEVANCE</span>
+        </div>
       </div>
+      
+      <nav class="main-nav">
+        <a href="/submit-grievance" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v240h-80v-200H520v-200H240v640h360v80H240Zm638 15L760-183v89h-80v-226h226v80h-90l118 118-56 57Zm-638-95v-640 640Z"/></svg></span> File Complaint
+        </a>
+        <a href="/track-complaint" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-80Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880h20q10 0 20 2v81q-10-2-19.5-2.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186q122-112 181-203.5T720-552v-8h80v8q0 100-79.5 217.5T480-80Zm56.5-423.5Q560-527 560-560t-23.5-56.5Q513-640 480-640t-56.5 23.5Q400-593 400-560t23.5 56.5Q447-480 480-480t56.5-23.5ZM480-560Zm240-80h80v-120h120v-80H800v-120h-80v120H600v80h120v120Z"/></svg></span> Track
+        </a>
+        <a href="/city-map" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M640-560v-126 126ZM174-132q-20 8-37-4.5T120-170v-560q0-13 7.5-23t20.5-15l212-72 240 84 186-72q20-8 37 4.5t17 33.5v337q-15-23-35.5-42T760-528v-204l-120 46v126q-21 0-41 3.5T560-546v-140l-160-56v523l-226 87Zm26-96 120-46v-468l-120 40v474Zm496.5-32q22.5-20 23.5-60 1-34-22.5-57T640-400q-34 0-57 23t-23 57q0 34 23 57t57 23q34 0 56.5-20ZM640-160q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 23-5.5 43.5T778-238l102 102-56 56-102-102q-18 11-38.5 16.5T640-160ZM320-742v468-468Z"/></svg></span> City Map
+        </a>
+        <a href="/citizen-dashboard" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg></span> My Dashboard
+        </a>
+      </nav>
     </div>
-  </header>
+
+    <div class="header-right">
+      <div class="city-selector">
+        <select id="citySelect">
+          <option value="Amravati">Amravati</option>
+          <option value="pune">Pune</option>
+          </select>
+      </div>
+      <!-- <button class="sign-in-btn">
+        <span class="icon">➡️</span> Sign In
+      </button> -->
+    </div>
+  </div>
+</header>
 
   <main>
     <div class="container" style="padding: 2rem 1rem;">

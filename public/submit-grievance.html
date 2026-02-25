@@ -12,28 +12,217 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/submit-grievance.css">
 </head>
+<style>
+  
+    /* header */
+    .header {
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #1a1a1a;
+  line-height: 1;
+}
+
+.brand-tagline {
+  font-size: 0.65rem;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+.main-nav {
+  display: flex;
+  margin-left: 160px;
+  gap: 10px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #4a4a4a;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.city-selector select {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #f8f9fa;
+}
+
+.sign-in-btn {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px; /* space between items */
+  margin: 40px 0;
+  position: relative;
+}
+
+.sub-a {
+  display: flex;
+  flex-direction: column; /* icon on top, text below */
+  align-items: center;
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+  font-size: 16px;
+  position: relative;
+}
+
+/* Icon size */
+.sub-a svg {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 6px;
+  fill: #464849;
+}
+
+/* Arrow between items */
+.sub-a:not(:last-child)::after {
+  content: "➝";
+  position: absolute;
+  right: -28px;
+  top: 25%;
+  font-size: 22px;
+  color: #464849;
+  font-weight: bold;
+}
+
+</style>
 
 <body class="submit-page">
   <header class="header">
-    <div class="container">
-      <h1>🏙️ Smart Urban Grievance System</h1>
-      <div>
-        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
-        <nav>
-          <a href="/citizen-dashboard">My Grievances</a>
-          <a href="/submit-grievance">Submit New</a>
-          <a href="#" id="logout">Logout</a>
-        </nav>
+  <div class="container">
+    <div class="header-left">
+      <div class="logo-section">
+        <div class="logo-icon"><svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background -->
+  <rect
+    x="2"
+    y="2"
+    width="96"
+    height="96"
+    rx="20"
+    ry="20"
+    fill="#0A4C84"
+  />
+
+  <!-- Shield Outline -->
+  <path
+    d="M50 22
+       C60 30, 72 30, 72 30
+       V55
+       C72 70, 60 80, 50 85
+       C40 80, 28 70, 28 55
+       V30
+       C28 30, 40 30, 50 22Z"
+    fill="none"
+    stroke="white"
+    stroke-width="6"
+    stroke-linejoin="round"
+  />
+
+</svg></div>
+        <div class="logo-text">
+          <span class="brand-name">NagarSeva</span>
+          <span class="brand-tagline">SMART GRIEVANCE</span>
+        </div>
       </div>
+      
+      <nav class="main-nav">
+        <a href="/submit-grievance" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v240h-80v-200H520v-200H240v640h360v80H240Zm638 15L760-183v89h-80v-226h226v80h-90l118 118-56 57Zm-638-95v-640 640Z"/></svg></span> File Complaint
+        </a>
+        <a href="/track-complaint" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-80Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880h20q10 0 20 2v81q-10-2-19.5-2.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186q122-112 181-203.5T720-552v-8h80v8q0 100-79.5 217.5T480-80Zm56.5-423.5Q560-527 560-560t-23.5-56.5Q513-640 480-640t-56.5 23.5Q400-593 400-560t23.5 56.5Q447-480 480-480t56.5-23.5ZM480-560Zm240-80h80v-120h120v-80H800v-120h-80v120H600v80h120v120Z"/></svg></span> Track
+        </a>
+        <a href="/city-map" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M640-560v-126 126ZM174-132q-20 8-37-4.5T120-170v-560q0-13 7.5-23t20.5-15l212-72 240 84 186-72q20-8 37 4.5t17 33.5v337q-15-23-35.5-42T760-528v-204l-120 46v126q-21 0-41 3.5T560-546v-140l-160-56v523l-226 87Zm26-96 120-46v-468l-120 40v474Zm496.5-32q22.5-20 23.5-60 1-34-22.5-57T640-400q-34 0-57 23t-23 57q0 34 23 57t57 23q34 0 56.5-20ZM640-160q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 23-5.5 43.5T778-238l102 102-56 56-102-102q-18 11-38.5 16.5T640-160ZM320-742v468-468Z"/></svg></span> City Map
+        </a>
+        <a href="/citizen-dashboard" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg></span> My Dashboard
+        </a>
+      </nav>
     </div>
-  </header>
+
+    <div class="header-right">
+      <div class="city-selector">
+        <select id="citySelect">
+          <option value="Amravati">Amravati</option>
+          <option value="pune">Pune</option>
+          </select>
+      </div>
+      <!-- <button class="sign-in-btn">
+        <span class="icon">➡️</span> Sign In
+      </button> -->
+    </div>
+  </div>
+</header>
 
   <main class="submit-main">
     <div class="container submit-grievance-container">
       <div class="submit-header">
-        <div class="submit-header-icon">✍️</div>
         <h2>Report an Issue</h2>
         <p>Describe the civic problem and we'll try to solve it</p>
+      </div>
+
+      <div class="header-icon">
+        <a href="#details" class="sub-a"><svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#000000"><path d="M580-450h180v-60H580v60Zm0-120h180v-60H580v60ZM200-320h320v-19q0-42-42.5-68.5T360-434q-75 0-117.5 26.5T200-339v19Zm211.5-195.42q21.5-21.42 21.5-51.5t-21.42-51.58q-21.42-21.5-51.5-21.5t-51.58 21.42q-21.5 21.42-21.5 51.5t21.42 51.58q21.42 21.5 51.5 21.5t51.58-21.42ZM140-160q-24 0-42-18t-18-42v-520q0-24 18-42t42-18h680q24 0 42 18t18 42v520q0 24-18 42t-42 18H140Zm0-60h680v-520H140v520Zm0 0v-520 520Z"/></svg>Details</a>
+        
+
+        <a href="#describe" class="sub-a"><svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#000000"><path d="M319-250h322v-60H319v60Zm0-170h322v-60H319v60ZM220-80q-24 0-42-18t-18-42v-680q0-24 18-42t42-18h361l219 219v521q0 24-18 42t-42 18H220Zm331-554v-186H220v680h520v-494H551ZM220-820v186-186 680-680Z"/></svg>Discribe</a>
+
+        <a href="#photos" class="sub-a"><svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#000000"><path d="M436-82q-76-8-141-42t-113-88q-48-54-75-123T80-481q0-155 102-269t255-130v60q-128 19-212.5 115T140-481q0 128 84 224t212 115v60Zm14-198v-284L323-437l-43-43 200-200 200 200-43 43-127-127v284h-60Zm74 198v-60q46-6 88.5-23.5T691-212l44 44q-46 35-99.5 58T524-82Zm168-667q-38-27-80-45.5T524-820v-60q58 7 111 29.5T735-793l-43 44Zm100 519-43-42q29-37 46-79.5t23-88.5h61q-7 58-29 111.5T792-230Zm26-292q-6-46-23-89t-46-79l47-41q35 46 56 99t27 110h-61Z"/></svg>Photos</a>
+
+        <a href="#gps" class="sub-a">
+          <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#000000"><path d="M450-410h60v-120h120v-60H510v-120h-60v120H330v60h120v120Zm30 251q133-121 196.5-219.5T740-552q0-117.79-75.5-192.9Q589-820 480-820t-184.5 75.1Q220-669.79 220-552q0 75 65 173.5T480-159Zm0 79Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/></svg>Location
+        </a>
       </div>
 
       <div id="alert" class="alert hidden"></div>
@@ -49,7 +238,7 @@
               <span class="select-arrow">▼</span>
             </div>
           </div>
-          <div class="form-group">
+          <div class="form-group" id="details">
             <label for="Name">Enter your name</label>
             <input type="text" id="name" name="name" required placeholder="Enter your full name" required />
           </div>
@@ -61,31 +250,31 @@
             <label for="phone">Mobile Number</label>
             <input type="tel" id="phone" name="phone" placeholder="Enter mobile number" pattern="[0-9]{10}" required />
           </div>
-          <div class="form-group">
+          <div class="form-group" id="describe">
             <label for="description">Describe the issue</label>
             <div class="description-field">
               <textarea id="description" name="description" required
                 placeholder="Type or use the mic to speak your description..."></textarea>
               <button type="button" id="voiceBtn" class="voice-btn" title="Speak to describe">
-                <span class="voice-icon">🎤</span>
+                <span class="voice-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M395-435q-35-35-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35q-50 0-85-35Zm85-205Zm-40 520v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm68.5-371.5Q520-503 520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480q17 0 28.5-11.5Z"/></svg></span>
                 <span class="voice-label">Use voice</span>
               </button>
             </div>
             <p class="field-hint">Type or tap the mic to speak. You can edit the text after.</p>
           </div>
-          <div class="form-group">
+          <div class="form-group" id="photos">
             <label for="images">Upload Photos (Optional)</label>
             <input type="file" id="images" name="images" accept="image/*" multiple capture="environment" />
             <p class="field-hint">
               You can select multiple photos or use camera.
             </p>
           </div>
-          <div class="form-group location-group">
+          <div class="form-group location-group" id="gps">
             <label for="location">Where is it?</label>
             <div class="location-field">
               <input type="text" id="location" name="location" required placeholder="Type address or use GPS to detect">
               <button type="button" id="trackLocationBtn" class="location-gps-btn" title="Use my current location">
-                <span class="gps-icon">📍</span>
+                <span class="gps-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M536.5-503.5Q560-527 560-560t-23.5-56.5Q513-640 480-640t-56.5 23.5Q400-593 400-560t23.5 56.5Q447-480 480-480t56.5-23.5ZM480-186q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/></svg></span>
                 <span class="gps-label">Use GPS</span>
               </button>
             </div>
@@ -110,10 +299,19 @@
       window.location.href = '/citizen-login';
     }
 
-    document.getElementById('logout').addEventListener('click', (e) => {
-      e.preventDefault();
-      logout();
-    });
+    // document.getElementById('logout').addEventListener('click', (e) => {
+    //   e.preventDefault();
+    //   logout();
+    // });
+
+    const logoutBtn = document.getElementById('logout');
+
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    logout();
+  });
+}
 
     async function loadCategories() {
       const res = await fetch('/api/categories');
@@ -152,43 +350,74 @@
       return parts.length ? parts.join(', ') : null;
     }
 
+    // const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    // let recognition = null;
+    // if (SpeechRecognition) {
+    //   recognition = new SpeechRecognition();
+    //   recognition.continuous = true;
+    //   recognition.interimResults = false;
+    //   recognition.lang = 'en-US';
+    // }
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
     if (SpeechRecognition) {
       recognition = new SpeechRecognition();
-      recognition.continuous = true;
+      recognition.lang = 'en-IN';
+      recognition.continuous = false;
       recognition.interimResults = false;
-      recognition.lang = 'en-US';
     }
 
     document.getElementById('voiceBtn').addEventListener('click', () => {
       const btn = document.getElementById('voiceBtn');
       const desc = document.getElementById('description');
+      
       if (!recognition) {
         showAlert('Voice input is not supported in your browser. Try Chrome or Edge.');
         return;
       }
+
       if (btn.classList.contains('listening')) {
         recognition.stop();
         btn.classList.remove('listening');
         btn.querySelector('.voice-label').textContent = 'Use voice';
         return;
       }
+
       btn.classList.add('listening');
-      btn.querySelector('.voice-label').textContent = 'Stop';
-      recognition.onresult = (e) => {
-        const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
-        desc.value = (desc.value ? desc.value + ' ' : '') + transcript;
+      btn.querySelector('.voice-label').textContent = 'Listening...';
+
+      recognition.onstart = () => {
+        btn.querySelector('.voice-label').textContent = 'Listening...';
       };
+
+      recognition.onresult = (e) => {
+        let transcript = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          transcript += e.results[i][0].transcript;
+        }
+        if (transcript.trim()) {
+          desc.value = (desc.value ? desc.value + ' ' : '') + transcript;
+        }
+      };
+
+      recognition.onerror = (e) => {
+        btn.classList.remove('listening');
+        btn.querySelector('.voice-label').textContent = 'Use voice';
+        if (e.error === 'network') {
+          showAlert('Network error. Check your connection.');
+        } else if (e.error === 'no-speech') {
+          showAlert('No speech detected. Try again.');
+        } else if (e.error !== 'aborted') {
+          showAlert('Mic error: ' + e.error);
+        }
+      };
+
       recognition.onend = () => {
         btn.classList.remove('listening');
         btn.querySelector('.voice-label').textContent = 'Use voice';
       };
-      recognition.onerror = (e) => {
-        btn.classList.remove('listening');
-        btn.querySelector('.voice-label').textContent = 'Use voice';
-        if (e.error !== 'aborted') showAlert('Could not hear. Try again or type.');
-      };
+
       recognition.start();
     });
 
@@ -316,10 +545,10 @@
       }
     });
 
-    loadCategories();
-    document.querySelector('.menu-toggle')?.addEventListener('click', () => {
-      document.querySelector('.header nav').classList.toggle('open');
-    });
+    // loadCategories();
+    // document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+    //   document.querySelector('.header nav').classList.toggle('open');
+    // });
   </script>
 </body>
 

@@ -86,7 +86,7 @@ function runSchema(db) {
     );
     CREATE TABLE IF NOT EXISTS grievance_categories (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
+      name TEXT NOT NULL UNIQUE,
       description TEXT,
       department TEXT
     );

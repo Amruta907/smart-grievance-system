@@ -287,24 +287,159 @@
         font-size: 0.85rem;
       }
     }
+
+    /* header */
+    .header {
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #1a1a1a;
+  line-height: 1;
+}
+
+.brand-tagline {
+  font-size: 0.65rem;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+.main-nav {
+  display: flex;
+  margin-left: 160px;
+  gap: 10px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #4a4a4a;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.city-selector select {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #f8f9fa;
+}
+
+.sign-in-btn {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
   </style>
 </head>
 
 <body>
   <header class="header">
-    <div class="container">
-      <h1>🏙️ Smart Urban Grievance System</h1>
-      <div>
-        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
-        <nav>
-          <span id="userName" style="color: rgba(255,255,255,0.9); font-weight: 600;"></span>
-          <a href="/citizen-dashboard">Dashboard</a>
-          <a href="/submit-grievance">Submit Complaint</a>
-          <a href="#" id="logout">Logout</a>
-        </nav>
+  <div class="container">
+    <div class="header-left">
+      <div class="logo-section">
+        <div class="logo-icon"><svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background -->
+  <rect
+    x="2"
+    y="2"
+    width="96"
+    height="96"
+    rx="20"
+    ry="20"
+    fill="#0A4C84"
+  />
+
+  <!-- Shield Outline -->
+  <path
+    d="M50 22
+       C60 30, 72 30, 72 30
+       V55
+       C72 70, 60 80, 50 85
+       C40 80, 28 70, 28 55
+       V30
+       C28 30, 40 30, 50 22Z"
+    fill="none"
+    stroke="white"
+    stroke-width="6"
+    stroke-linejoin="round"
+  />
+
+</svg></div>
+        <div class="logo-text">
+          <span class="brand-name">NagarSeva</span>
+          <span class="brand-tagline">SMART GRIEVANCE</span>
+        </div>
       </div>
+      
+      <nav class="main-nav">
+        <a href="/submit-grievance" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v240h-80v-200H520v-200H240v640h360v80H240Zm638 15L760-183v89h-80v-226h226v80h-90l118 118-56 57Zm-638-95v-640 640Z"/></svg></span> File Complaint
+        </a>
+        <a href="/track-complaint" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-80Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880h20q10 0 20 2v81q-10-2-19.5-2.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186q122-112 181-203.5T720-552v-8h80v8q0 100-79.5 217.5T480-80Zm56.5-423.5Q560-527 560-560t-23.5-56.5Q513-640 480-640t-56.5 23.5Q400-593 400-560t23.5 56.5Q447-480 480-480t56.5-23.5ZM480-560Zm240-80h80v-120h120v-80H800v-120h-80v120H600v80h120v120Z"/></svg></span> Track
+        </a>
+        <a href="/city-map" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M640-560v-126 126ZM174-132q-20 8-37-4.5T120-170v-560q0-13 7.5-23t20.5-15l212-72 240 84 186-72q20-8 37 4.5t17 33.5v337q-15-23-35.5-42T760-528v-204l-120 46v126q-21 0-41 3.5T560-546v-140l-160-56v523l-226 87Zm26-96 120-46v-468l-120 40v474Zm496.5-32q22.5-20 23.5-60 1-34-22.5-57T640-400q-34 0-57 23t-23 57q0 34 23 57t57 23q34 0 56.5-20ZM640-160q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 23-5.5 43.5T778-238l102 102-56 56-102-102q-18 11-38.5 16.5T640-160ZM320-742v468-468Z"/></svg></span> City Map
+        </a>
+        <a href="/citizen-dashboard" class="nav-link">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg></span> My Dashboard
+        </a>
+      </nav>
     </div>
-  </header>
+
+    <div class="header-right">
+      <div class="city-selector">
+        <select id="citySelect">
+          <option value="Amravati">Amravati</option>
+          <option value="pune">Pune</option>
+          </select>
+      </div>
+      <!-- <button class="sign-in-btn">
+        <span class="icon">➡️</span> Sign In
+      </button> -->
+    </div>
+  </div>
+</header>
 
   <main>
     <div class="container" style="padding: 2rem 1rem;">
@@ -318,28 +453,28 @@
       <!-- Statistics -->
       <div class="dashboard-stats">
         <div class="stat-card">
-          <div class="stat-icon blue">📋</div>
+          <div class="stat-icon blue"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg></div>
           <div class="stat-content">
             <h3>Total Complaints</h3>
             <div class="number" id="totalComplaints">0</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon orange">⏳</div>
+          <div class="stat-icon orange"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></div>
           <div class="stat-content">
             <h3>Open</h3>
             <div class="number" id="openComplaints">0</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon purple">✓</div>
+          <div class="stat-icon purple"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m366-310 114-114 114 114 56-56-114-114 114-114-56-56-114 114-114-114-56 56 114 114-114 114 56 56ZM200-200v-560 560-1 1Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v334q-19-7-39-10.5t-41-3.5v-320H200v560h320q0 21 3.5 41t10.5 39H200Zm560 80-56-56 63-64H600v-80h167l-63-64 56-56 160 160L760-40Z"/></svg></div>
           <div class="stat-content">
             <h3>Closed</h3>
             <div class="number" id="closedComplaints">0</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon red">⚠️</div>
+          <div class="stat-icon red"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280h-80v-200H160v400h320v80H160ZM760 0q-73 0-127.5-45.5T564-160h62q13 44 49.5 72T760-60q58 0 99-41t41-99q0-58-41-99t-99-41q-29 0-54 10.5T662-300h58v60H560v-160h60v57q27-26 63-41.5t77-15.5q83 0 141.5 58.5T960-200q0 83-58.5 141.5T760 0Z"/></svg></div>
           <div class="stat-content">
             <h3>Reopened</h3>
             <div class="number" id="reopenedComplaints">0</div>

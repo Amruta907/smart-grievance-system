@@ -21,6 +21,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+ 
 }
 
 html {
@@ -69,12 +70,13 @@ a:hover {
 
 /* Header */
 .header {
-  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #0288d1 100%);
+  /* background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #0288d1 100%); */
   color: white;
   padding: 1.1rem 0;
   box-shadow: 0 8px 24px rgba(13, 71, 161, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  position: relative;
+  position:static;
   overflow: hidden;
+  
 }
 
 .header::before {
@@ -114,8 +116,8 @@ a:hover {
 }
 
 .header nav a {
-  color: rgba(255,255,255,0.95);
-  padding: 0.6rem 1.2rem;
+  color: rgba(0, 0, 0, 0.95);
+   padding: 0.6rem 1rem; 
   border-radius: 10px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 500;
@@ -123,16 +125,13 @@ a:hover {
 }
 
 .header nav a:hover {
-  background: rgba(255,255,255,0.2);
-  color: white;
+  background: rgba(255,255,255,0.15);
+  /* color: white; */
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.header nav a:hover {
-  background: rgba(255,255,255,0.15);
-  color: white;
-}
+
 
 /* Hero / Landing */
 .hero {
@@ -196,7 +195,7 @@ a:hover {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, #1565c0 50%, #0288d1 100%);
+  background: #0A4C84;
   color: white;
   box-shadow: 0 8px 20px rgba(13, 71, 161, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
