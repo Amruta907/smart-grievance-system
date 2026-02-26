@@ -1,4 +1,4 @@
-const initSqlJs = require('sql.js');
+const { DatabaseSync } = require('node:sqlite');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
@@ -14,66 +14,26 @@ function getDb() {
   throw new Error('Database not initialized. Call initDb() first.');
 }
 
-async function initDb() {
+function initDb() {
   if (_db) return _db;
-  const SQL = await initSqlJs();
-  let db;
-  if (fs.existsSync(dbPath)) {
-    const buffer = fs.readFileSync(dbPath);
-    db = new SQL.Database(buffer);
-  } else {
-    db = new SQL.Database();
-  }
-  _db = createCompatLayer(db);
+
+  _db = new DatabaseSync(dbPath);
+  _db.exec('PRAGMA journal_mode = WAL;');
+  _db.exec('PRAGMA foreign_keys = ON;');
+
   runSchema(_db);
   return _db;
 }
 
-function createCompatLayer(db) {
-  const save = () => {
-    try {
-      const data = db.export();
-      fs.writeFileSync(dbPath, Buffer.from(data));
-    } catch (e) {}
-  };
-  return {
-    prepare(sql) {
-      return {
-        run(...params) {
-          const stmt = db.prepare(sql);
-          stmt.bind(params);
-          stmt.step();
-          stmt.free();
-          save();
-          const res = db.exec("SELECT last_insert_rowid() as id");
-          const lastId = res.length && res[0].values && res[0].values[0] ? res[0].values[0][0] : 0;
-          return { lastInsertRowid: lastId, changes: db.getRowsModified ? db.getRowsModified() : 0 };
-        },
-        get(...params) {
-          const stmt = db.prepare(sql);
-          stmt.bind(params);
-          const row = stmt.step() ? stmt.getAsObject() : null;
-          stmt.free();
-          return row;
-        },
-        all(...params) {
-          const stmt = db.prepare(sql);
-          stmt.bind(params);
-          const rows = [];
-          while (stmt.step()) rows.push(stmt.getAsObject());
-          stmt.free();
-          return rows;
-        }
-      };
-    },
-    exec(sql) {
-      db.exec(sql);
-      save();
-    }
-  };
-}
-
 function runSchema(db) {
+  function ensureColumn(table, column, definition) {
+    const cols = db.prepare(`PRAGMA table_info(${table})`).all();
+    const exists = cols.some((c) => c.name === column);
+    if (!exists) {
+      db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+    }
+  }
+
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,18 +44,20 @@ function runSchema(db) {
       role TEXT NOT NULL CHECK(role IN ('citizen', 'authority')),
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
     CREATE TABLE IF NOT EXISTS grievance_categories (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL UNIQUE,
       description TEXT,
       department TEXT
     );
+
     CREATE TABLE IF NOT EXISTS grievances (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       ticket_number TEXT UNIQUE NOT NULL,
       citizen_id INTEGER NOT NULL,
       category_id INTEGER NOT NULL,
-      title TEXT ,
+      title TEXT,
       description TEXT NOT NULL,
       location TEXT,
       latitude REAL,
@@ -116,20 +78,27 @@ function runSchema(db) {
       FOREIGN KEY (category_id) REFERENCES grievance_categories(id),
       FOREIGN KEY (assigned_to) REFERENCES users(id)
     );
+
     CREATE TABLE IF NOT EXISTS grievance_comments (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       grievance_id INTEGER NOT NULL,
       user_id INTEGER NOT NULL,
       comment TEXT NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(grievance_id, user_id, comment, created_at),
       FOREIGN KEY (grievance_id) REFERENCES grievances(id),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
+
     CREATE INDEX IF NOT EXISTS idx_grievances_citizen ON grievances(citizen_id);
     CREATE INDEX IF NOT EXISTS idx_grievances_status ON grievances(status);
     CREATE INDEX IF NOT EXISTS idx_grievances_assigned ON grievances(assigned_to);
     CREATE INDEX IF NOT EXISTS idx_grievances_created ON grievances(created_at);
+    CREATE INDEX IF NOT EXISTS idx_comments_grievance ON grievance_comments(grievance_id);
   `);
+
+  ensureColumn('grievances', 'submitted_name', 'TEXT');
+
   const categories = [
     ['Potholes & Roads', 'Road damage, potholes, pavement issues', 'Public Works'],
     ['Street Lights', 'Non-functional street lights, dark areas', 'Municipal Corporation'],
@@ -141,15 +110,31 @@ function runSchema(db) {
     ['Noise Pollution', 'Noise complaints', 'Pollution Control'],
     ['Other', 'Other civic issues', 'General']
   ];
+
+  const insertCategory = db.prepare(`
+    INSERT OR IGNORE INTO grievance_categories (name, description, department)
+    VALUES (?, ?, ?)
+  `);
+
   categories.forEach(([name, desc, dept]) => {
     try {
-      db.prepare('INSERT OR IGNORE INTO grievance_categories (name, description, department) VALUES (?, ?, ?)').run(name, desc, dept);
-    } catch (e) {}
+      insertCategory.run(name, desc, dept);
+    } catch (_e) {
+      // Category already exists or insert skipped.
+    }
   });
+
   const adminHash = bcrypt.hashSync('admin123', 10);
+  const insertAdmin = db.prepare(`
+    INSERT OR IGNORE INTO users (email, password, name, role)
+    VALUES (?, ?, ?, 'authority')
+  `);
+
   try {
-    db.prepare(`INSERT OR IGNORE INTO users (email, password, name, role) VALUES (?, ?, ?, 'authority')`).run('admin@government.gov', adminHash, 'System Administrator');
-  } catch (e) {}
+    insertAdmin.run('admin@government.gov', adminHash, 'System Administrator');
+  } catch (_e) {
+    // Admin already exists or insert skipped.
+  }
 }
 
 module.exports = { initDb, getDb };

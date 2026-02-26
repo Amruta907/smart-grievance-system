@@ -425,7 +425,7 @@
         }
 
         // Comments
-        loadComments(g.id);
+        loadComments(g.id, g.comments);
 
         document.getElementById('content').classList.remove('hidden');
       } catch (err) {
@@ -452,18 +452,18 @@
       }
     }
 
-    async function loadComments(grievanceId) {
-      const comments = []; // Load from API if available
+    async function loadComments(grievanceId, comments) {
       const commentsList = document.getElementById('commentsList');
       
-      if (!comments.length) {
-        commentsList.innerHTML = '<p style="color: #5c6bc0; text-align: center;">No comments yet. Be the first to add one!</p>';
+      if (!comments || !comments.length) {
+        commentsList.innerHTML = '<p style="color: var(--text-muted); text-align: center;">No comments yet. Be the first to add one!</p>';
       } else {
-        commentsList.innerHTML = comments.map(c => `
-          <div class="comment-item">
-            <div class="comment-author">${c.author}</div>
-            <div class="comment-time">${new Date(c.created_at).toLocaleString()}</div>
-            <div class="comment-text">${c.text}</div>
+        // Remove duplicates by ID
+        const uniqueComments = Array.from(new Map(comments.map(c => [c.id, c])).values());
+        commentsList.innerHTML = uniqueComments.map(c => `
+          <div style="padding: 0.75rem; border-bottom: 1px solid #eee;">
+            <strong>${c.user_name}</strong> <span style="color: var(--text-muted); font-size: 0.9rem;">${new Date(c.created_at).toLocaleString()}</span>
+            <p style="margin-top: 0.25rem;">${c.comment}</p>
           </div>
         `).join('');
       }
@@ -473,9 +473,8 @@
       if (!confirm('Are you sure you want to reopen this grievance?')) return;
       
       try {
-        const res = await apiFetch(`/api/grievances/${id}`, {
-          method: 'PUT',
-          body: JSON.stringify({ status: 'reopened' })
+        const res = await apiFetch(`/api/grievances/${id}/reopen`, {
+          method: 'POST'
         });
 
         if (res.ok) {
@@ -492,16 +491,39 @@
 
     document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      // Handle feedback submission
-      alert('Thank you for your feedback!');
-      document.getElementById('feedbackSection').classList.add('hidden');
+      const res = await apiFetch(`/api/grievances/${id}/feedback`, {
+        method: 'POST',
+        body: JSON.stringify({
+          rating: parseInt(document.getElementById('rating').value),
+          feedback: document.getElementById('feedback').value
+        })
+      });
+      if (res.ok) {
+        alert('Thank you for your feedback!');
+        document.getElementById('feedbackSection').classList.add('hidden');
+        loadGrievance();
+      } else {
+        alert('Failed to submit feedback');
+      }
     });
 
     document.getElementById('commentForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      // Handle comment submission
-      alert('Comment posted!');
-      document.getElementById('comment').value = '';
+      const comment = document.getElementById('comment').value.trim();
+      if (!comment) {
+        alert('Please enter a comment');
+        return;
+      }
+      const res = await apiFetch(`/api/grievances/${id}/comments`, {
+        method: 'POST',
+        body: JSON.stringify({ comment })
+      });
+      if (res.ok) {
+        document.getElementById('comment').value = '';
+        loadGrievance();
+      } else {
+        alert('Failed to post comment');
+      }
     });
 
     // Mobile menu
@@ -510,75 +532,6 @@
     });
 
     loadGrievance();
-  </script>
-</body>
-</html>
-        <h2>${g.title}</h2>
-        <p style="margin: 1rem 0;">${g.description}</p>
-        <p><strong>Location:</strong> ${g.location || '-'}</p>
-        <p><strong>Priority:</strong> ${g.priority}</p>
-        ${g.resolution_notes ? `<p class="mt-2"><strong>Resolution:</strong> ${g.resolution_notes}</p>` : ''}
-        ${g.resolved_at ? `<p><strong>Resolved:</strong> ${new Date(g.resolved_at).toLocaleString()}</p>` : ''}
-      `;
-
-      if (g.status === 'resolved' && !g.citizen_rating) {
-        document.getElementById('feedbackSection').classList.remove('hidden');
-      }
-      if (g.status === 'resolved' && g.citizen_rating) {
-        document.getElementById('reopenSection').classList.remove('hidden');
-      }
-
-      document.getElementById('commentsList').innerHTML = (g.comments || []).map(c => `
-        <div style="padding: 0.75rem; border-bottom: 1px solid #eee;">
-          <strong>${c.user_name}</strong> <span style="color: var(--text-muted); font-size: 0.9rem;">${new Date(c.created_at).toLocaleString()}</span>
-          <p style="margin-top: 0.25rem;">${c.comment}</p>
-        </div>
-      `).join('') || '<p style="color: var(--text-muted);">No comments yet.</p>';
-
-      document.getElementById('rating').addEventListener('input', (e) => {
-        document.getElementById('ratingVal').textContent = e.target.value;
-      });
-
-      document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const res = await apiFetch(`/api/grievances/${id}/feedback`, {
-          method: 'POST',
-          body: JSON.stringify({
-            rating: parseInt(document.getElementById('rating').value),
-            feedback: document.getElementById('feedback').value
-          })
-        });
-        if (res.ok) {
-          document.getElementById('feedbackSection').classList.add('hidden');
-          loadGrievance();
-        }
-      });
-
-      document.getElementById('reopenBtn').addEventListener('click', async () => {
-        if (!confirm('Reopen this grievance?')) return;
-        const res = await apiFetch(`/api/grievances/${id}/reopen`, { method: 'POST' });
-        if (res.ok) loadGrievance();
-      });
-
-      document.getElementById('commentForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const comment = document.getElementById('comment').value.trim();
-        if (!comment) return;
-        const res = await apiFetch(`/api/grievances/${id}/comments`, {
-          method: 'POST',
-          body: JSON.stringify({ comment })
-        });
-        if (res.ok) {
-          document.getElementById('comment').value = '';
-          loadGrievance();
-        }
-      });
-    }
-
-    loadGrievance();
-    document.querySelector('.menu-toggle')?.addEventListener('click', () => {
-      document.querySelector('.header nav').classList.toggle('open');
-    });
   </script>
 </body>
 </html>

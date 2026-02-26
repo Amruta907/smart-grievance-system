@@ -481,7 +481,7 @@
 
     async function loadGrievances() {
       try {
-        const res = await apiFetch('/api/grievances');
+        const res = await apiFetch('/api/authority/grievances?limit=500');
         const data = await res.json();
         document.getElementById('loading').classList.add('hidden');
 
@@ -490,9 +490,9 @@
           return;
         }
 
-        allGrievances = data;
-        updateStatistics(data);
-        displayGrievances(data);
+        allGrievances = data.grievances || [];
+        updateStatistics(allGrievances);
+        displayGrievances(allGrievances);
         document.getElementById('grievancesList').classList.remove('hidden');
       } catch (err) {
         console.error(err);
@@ -584,8 +584,8 @@
       };
 
       try {
-        const res = await apiFetch(`/api/grievances/${currentGrievance.id}`, {
-          method: 'PUT',
+        const res = await apiFetch(`/api/authority/grievances/${currentGrievance.id}`, {
+          method: 'PATCH',
           body: JSON.stringify(updateData)
         });
 

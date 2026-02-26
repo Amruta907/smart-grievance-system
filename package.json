@@ -1,25 +1,37 @@
 {
   "name": "smart-urban-grievance-system",
   "version": "1.0.0",
-  "description": "Smart Urban Grievance & Service Response System",
-  "main": "server.js",
+  "description": "Smart Urban Grievance platform (Express + React + SQLite + TypeScript + Tailwind)",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "init-db": "node scripts/init-db.js",
-    "reset-db": "node scripts/reset-db.js"
+    "dev": "concurrently \"npm run dev:server\" \"npm --prefix client run dev\"",
+    "dev:server": "tsx watch src/server.ts",
+    "build": "npm run build:server && npm --prefix client run build",
+    "build:server": "tsc -p tsconfig.server.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc -p tsconfig.server.json --noEmit"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "multer": "^2.0.2",
-    "sql.js": "^1.10.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "zod": "^3.25.76"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.3.0",
+    "@types/uuid": "^10.0.0",
+    "concurrently": "^9.2.1",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "module"
 }

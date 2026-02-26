@@ -1,123 +1,85 @@
+# NagarSeva (MERN-style with SQLite)
 
-# smart-grievance-system
-=======
-# Smart Urban Grievance & Service Response System
+NagarSeva is now structured as:
+- `M`: replaced with SQLite (instead of MongoDB)
+- `E`: Express API (TypeScript)
+- `R`: React frontend (TypeScript + Tailwind)
+- `N`: Node.js runtime
 
-A full-stack web application for citizens to report civic issues and for government authorities to manage and resolve grievances. Built with HTML, CSS, JavaScript, Node.js, Express, and SQL (SQLite).
+## Stack
+- Backend: Express + TypeScript + `node:sqlite`
+- Frontend: React + TypeScript + Tailwind + Vite
+- Auth: bcryptjs + token sessions
+- Map: React Leaflet + OpenStreetMap tiles
 
-## Features
+## Project Layout
+- `src/server.ts` - Express API + production static hosting
+- `src/db.ts` - SQLite schema + seed data
+- `client/` - React + Tailwind app
 
-### Citizen Portal
-- **Register & Login** – Create account or sign in
-- **Submit Grievances** – Report issues with category, title, description, location, and priority
-- **Track Status** – View all submitted grievances and their current status
-- **Grievance Details** – See updates, add comments, rate resolution, reopen if needed
-- **Categories** – Potholes, Street Lights, Waste Management, Water Supply, Drainage, Parks, Traffic, Noise, etc.
-
-### Government Authority Portal
-- **Login** – Secure access for authorized personnel
-- **Dashboard** – Overview of total, submitted, in-progress, and resolved grievances
-- **Filter & Search** – Filter by status and department
-- **Manage Grievances** – Update status, assign department, set priority, add resolution notes
-- **Comments** – Add internal or public comments on grievances
-
-### Technical
-- **Responsive Design** – Works on desktop, tablet, and mobile
-- **RESTful APIs** – Clean API structure for all operations
-- **SQL Database** – SQLite with proper schema (users, grievances, categories, comments)
-- **Session-based Auth** – Token-based authentication
-
-## Tech Stack
-
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Backend:** Node.js, Express
-- **Database:** SQLite (better-sqlite3) with SQL
-- **Auth:** bcryptjs for password hashing, UUID for session tokens
-
-## Setup
-
-### Prerequisites
-- Node.js 16+ and npm
-
-### Installation
-
-1. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Initialize database** (runs automatically on first start)
-   ```bash
-   npm run init-db
-   ```
-
-3. **Start the server**
-   ```bash
-   npm start
-   ```
-
-4. **Open in browser**
-   - Home: http://localhost:3000
-   - Citizen Login: http://localhost:3000/citizen-login
-   - Authority Login: http://localhost:3000/authority-login
-
-### Default Authority Credentials
-- **Email:** admin@government.gov
-- **Password:** admin123
-
-## Project Structure
-
+## Run
+1. Install root dependencies:
+```bash
+npm install
 ```
-smart griverance/
-├── server.js           # Express server & REST API routes
-├── db.js               # Database connection
-├── package.json
-├── scripts/
-│   └── init-db.js      # Database schema & seed data
-├── data/
-│   └── grievance.db    # SQLite database (created on first run)
-└── public/
-    ├── index.html      # Landing page
-    ├── citizen-login.html
-    ├── authority-login.html
-    ├── citizen-dashboard.html
-    ├── submit-grievance.html
-    ├── grievance-detail.html
-    ├── authority-dashboard.html
-    ├── css/
-    │   └── styles.css  # Responsive styles
-    └── js/
-        └── auth.js     # Auth helpers
+2. Install frontend dependencies:
+```bash
+npm --prefix client install
+```
+3. Start backend + frontend:
+```bash
+npm run dev
 ```
 
-## API Endpoints
+## Default Logins
+- Citizen:
+  - Email: `citizen@nagarseva.com`
+  - Password: `citizen123`
+- Authority:
+  - Email: `admin@nagarseva.gov`
+  - Password: `admin123`
 
-### Auth
-- `POST /api/auth/citizen/login` – Citizen login
-- `POST /api/auth/citizen/register` – Citizen registration
-- `POST /api/auth/authority/login` – Authority login
-- `POST /api/auth/logout` – Logout
+## UI Coverage
+The React screens are aligned to your references:
+- `/` landing hero
+- `/login` role-switch login/register
+- `/dashboard` feature card dashboard
+- `/map` city map with status markers and legend
 
-### Grievances (Citizen)
-- `GET /api/categories` – List grievance categories
-- `POST /api/grievances` – Submit grievance
-- `GET /api/grievances/my` – My grievances
-- `GET /api/grievances/:id` – Grievance details
-- `POST /api/grievances/:id/feedback` – Rate resolution
-- `POST /api/grievances/:id/reopen` – Reopen resolved grievance
-- `POST /api/grievances/:id/comments` – Add comment
+## Telegram Complaint Bot Integration
+The backend now includes Telegram complaint filing via webhook.
 
-### Authority
-- `GET /api/authority/dashboard` – Dashboard stats
-- `GET /api/authority/grievances` – All grievances (with filters)
-- `PATCH /api/authority/grievances/:id` – Update grievance
+### Environment Variables
+Set these before starting server:
 
-## Grievance Status Flow
+```bash
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_WEBHOOK_SECRET=your_random_secret_token
+APP_BASE_URL=https://your-public-domain
+```
 
-Submitted → Assigned → In Progress → Resolved  
-(Can be Rejected or Reopened at appropriate stages)
+### Endpoints Added
+- `POST /webhooks/telegram`
+  - Receives Telegram updates
+  - Verifies header `x-telegram-bot-api-secret-token` when secret is set
+- `POST /api/telegram/set-webhook`
+  - Registers Telegram webhook to `${APP_BASE_URL}/webhooks/telegram`
 
-## License
+### Bot Commands
+- `/start` or `/new` to begin complaint filing
+- `/status <ticket_number>` to check complaint status
+- `/cancel` to cancel current complaint draft
+- `/help` for command help
 
-MIT
+### Conversation Flow
+1. Select language (English/Hindi/Marathi)
+2. Select category
+3. Enter issue description
+4. Enter location text or send live location
+5. Confirm and submit
 
+### Database Changes
+- New table: `telegram_sessions`
+- New table: `telegram_updates` (for dedup/idempotency)
+- `users.telegram_chat_id` column
+- `grievances.source_channel` and `grievances.source_user_id` columns

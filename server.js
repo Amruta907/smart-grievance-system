@@ -142,12 +142,14 @@ function computePriority(categoryId, description) {
 app.post('/api/grievances', authMiddleware, upload.array('images', 5),  async(req, res) => {
   const db = getDb();
   if (req.user.role !== 'citizen') return res.status(403).json({ error: 'Forbidden' });
-  const { category_id, description, location, latitude, longitude } = req.body;
+  const { category_id, name, description, location, latitude, longitude } = req.body;
 
   const catId = parseInt(category_id, 10);
   if (!catId || catId < 1) return res.status(400).json({ error: 'Please select a category' });
   const desc = (description || '').trim();
+  const submittedName = (name || '').trim();
   if (!desc) return res.status(400).json({ error: 'Description is required' });
+  if (!submittedName) return res.status(400).json({ error: 'Name is required' });
   if (!(location || '').trim()) return res.status(400).json({ error: 'Location is required' });
 
   const title = desc.split(/\r?\n/)[0].slice(0, 100) || 'Grievance';
@@ -155,9 +157,9 @@ app.post('/api/grievances', authMiddleware, upload.array('images', 5),  async(re
   const ticketNumber = 'GRV-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6).toUpperCase();
   try {
     db.prepare(`
-      INSERT INTO grievances (ticket_number, citizen_id, category_id, title, description, location, latitude, longitude, priority)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(ticketNumber, req.user.id, catId, title, desc, (location || '').trim() || null, latitude || null, longitude || null, priority);
+      INSERT INTO grievances (ticket_number, citizen_id, category_id, title, description, location, latitude, longitude, priority, submitted_name)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(ticketNumber, req.user.id, catId, title, desc, (location || '').trim() || null, latitude || null, longitude || null, priority, submittedName);
     const grievance = db.prepare('SELECT g.*, c.name as category_name FROM grievances g JOIN grievance_categories c ON g.category_id = c.id WHERE g.ticket_number = ?').get(ticketNumber);
     if (!grievance) return res.status(500).json({ error: 'Failed to retrieve created grievance' });
     res.status(201).json(grievance);
@@ -172,9 +174,10 @@ app.get('/api/grievances/my', authMiddleware, (req, res) => {
   const db = getDb();
   if (req.user.role !== 'citizen') return res.status(403).json({ error: 'Forbidden' });
   const grievances = db.prepare(`
-    SELECT g.*, c.name as category_name, c.department 
+    SELECT g.*, c.name as category_name, c.department, u.name as account_name
     FROM grievances g 
     JOIN grievance_categories c ON g.category_id = c.id 
+    JOIN users u ON g.citizen_id = u.id
     WHERE g.citizen_id = ? 
     ORDER BY g.created_at DESC
   `).all(req.user.id);
@@ -320,14 +323,28 @@ const dataDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
 // Initialize DB and start server
-(async () => {
-  try {
-    await initDb();
-    app.listen(PORT, () => {
-      console.log(`Smart Urban Grievance System running at http://localhost:${PORT}`);
-    });
-  } catch (e) {
-    console.error('Failed to start:', e.message);
-    process.exit(1);
-  }
-})();
+try {
+  initDb();
+  app.listen(PORT, () => {
+    console.log(`Smart Urban Grievance System running at http://localhost:${PORT}`);
+  });
+} catch (e) {
+  console.error('Failed to start:', e.message);
+  process.exit(1);
+}
+
+
+// language changer 
+const i18next = require('i18next');
+const Backend = require('i18next-fs-backend');
+const middleware = require('i18next-http-middleware');
+
+i18next
+  .use(Backend)
+  .use(middleware.LanguageDetector)
+  .init({
+    fallbackLng: 'en',
+    backend: { loadPath: './locales/{{lng}}.json' }
+  });
+
+app.use(middleware.handle(i18next));

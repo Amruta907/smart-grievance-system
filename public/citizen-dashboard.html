@@ -434,6 +434,14 @@
           <option value="pune">Pune</option>
           </select>
       </div>
+      <div>
+        <select onchange="window.location.href='?lng=' + this.value">
+    <option value="en">English</option>
+    <option value="mr">मराठी (Marathi)</option>
+</select>
+
+      </div>
+    
       <!-- <button class="sign-in-btn">
         <span class="icon">➡️</span> Sign In
       </button> -->
@@ -518,6 +526,7 @@
           <thead>
             <tr>
               <th>ID</th>
+              <th>Name</th>
               <th>Category</th>
               <th>Department</th>
               <th>Status</th>
@@ -545,11 +554,18 @@
       window.location.href = '/citizen-login';
     }
 
-    document.getElementById('userName').textContent = getUser()?.name || 'Citizen';
-    document.getElementById('logout').addEventListener('click', (e) => {
-      e.preventDefault();
-      logout();
-    });
+    const userNameEl = document.getElementById('userName');
+    if (userNameEl) {
+      userNameEl.textContent = getUser()?.name || 'Citizen';
+    }
+
+    const logoutEl = document.getElementById('logout');
+    if (logoutEl) {
+      logoutEl.addEventListener('click', (e) => {
+        e.preventDefault();
+        logout();
+      });
+    }
 
     let allComplaints = [];
 
@@ -584,6 +600,8 @@
         document.getElementById('complaintsList').classList.remove('hidden');
       } catch (err) {
         console.error(err);
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('empty').classList.remove('hidden');
         showAlert('Failed to load complaints', 'error');
       }
     }
@@ -619,8 +637,12 @@
 
       data.forEach(complaint => {
         const tr = document.createElement('tr');
+        const shortTicket = complaint.ticket_number
+          ? complaint.ticket_number.replace(/^GRV-/, '').slice(-10)
+          : complaint.id;
         tr.innerHTML = `
-          <td><strong>${complaint.ticket_number}</strong></td>
+          <td><strong>${shortTicket}</strong></td>
+          <td>${complaint.submitted_name || complaint.account_name || '-'}</td>
           <td>${complaint.category_name}</td>
           <td>${complaint.department || '-'}</td>
           <td>

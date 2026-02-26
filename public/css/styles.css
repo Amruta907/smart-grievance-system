@@ -36,8 +36,6 @@ body {
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
-  background: #f4f7fb;
-  font-family: "Segoe UI", sans-serif;
 }
 
 /* Typography */
@@ -364,6 +362,36 @@ a:hover {
 
 .form-footer a {
   font-weight: 600;
+}
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.language-switcher label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.language-switcher select {
+  min-width: 130px;
+  padding: 0.45rem 0.6rem;
+  border: 1.5px solid #d5dbe3;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--text);
+}
+
+.language-switcher select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.12);
 }
 
 /* Alerts */
@@ -877,6 +905,161 @@ tr:hover {
   margin-top: 1.5rem;
 }
 
-.hidden {
-  display: none !important;
+/* Global responsive overrides for dashboards + custom headers */
+/*
+img,
+svg {
+  max-width: 100%;
+  height: auto;
 }
+
+.grievances-table,
+.complaints-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.grievances-table table,
+.complaints-table table {
+  min-width: 760px;
+}
+
+.header-left,
+.header-right,
+.main-nav {
+  min-width: 0;
+}
+
+.main-nav {
+  margin-left: 0 !important;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+  .header .container {
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .header-left,
+  .header-right {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .main-nav {
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0.8rem 0.9rem !important;
+  }
+
+  .header .container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.7rem;
+  }
+
+  .header nav,
+  .main-nav {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 0.5rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .header nav a,
+  .main-nav .nav-link {
+    flex: 0 0 auto;
+  }
+
+  .header-right {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+
+  .city-selector select,
+  .header-right select {
+    width: 100%;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .filters,
+  .filters-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  .filter-group {
+    width: 100%;
+    align-items: stretch !important;
+  }
+
+  .filter-group select,
+  .filters select {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .header-icon {
+    gap: 0.8rem !important;
+    margin: 1rem 0 !important;
+    flex-wrap: wrap;
+  }
+
+  .sub-a {
+    width: calc(50% - 0.5rem);
+    min-width: 130px;
+  }
+
+  .sub-a:not(:last-child)::after {
+    display: none !important;
+  }
+
+  #modal .card {
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .header-right {
+    grid-template-columns: 1fr;
+  }
+
+  .location-field {
+    flex-direction: column;
+    border-radius: 12px;
+  }
+
+  .location-gps-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    border-left: none !important;
+    border-top: 1px solid #d4dce6;
+  }
+
+  .submit-card {
+    padding: 1rem !important;
+    border-radius: 14px;
+  }
+} */
