@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useContext, useMemo, useState } from "react";
+import { apiUrl } from "./api";
 import { User } from "../types";
 
 type AuthState = {
@@ -53,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           localStorage.getItem(TOKEN_KEY) ??
           localStorage.getItem(LEGACY_TOKEN_KEY);
         if (currentToken) {
-          void fetch("/api/auth/logout", {
+          void fetch(apiUrl("/api/auth/logout"), {
             method: "POST",
             headers: { Authorization: `Bearer ${currentToken}` }
           }).catch(() => undefined);

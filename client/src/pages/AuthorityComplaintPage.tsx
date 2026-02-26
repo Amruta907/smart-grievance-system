@@ -2,7 +2,7 @@ import { LoaderCircle, MapPin } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer } from "react-leaflet";
 import { Link, useParams } from "react-router-dom";
-import { getAuthorityComplaint, updateAuthorityComplaintStatus } from "../lib/api";
+import { getAuthorityComplaint, resolveAssetUrl, updateAuthorityComplaintStatus } from "../lib/api";
 import { useAuth } from "../lib/auth";
 
 type MediaItem = { url: string; type: "image" | "video" };
@@ -39,7 +39,7 @@ export default function AuthorityComplaintPage() {
     try {
       const list = JSON.parse(raw) as string[];
       return list.map((url) => ({
-        url,
+        url: resolveAssetUrl(url),
         type: /\.(mp4|webm|mov)$/i.test(url) ? "video" : "image"
       }));
     } catch {

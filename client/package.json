@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://github.com/Amruta907/smart-grievance-system.git",
+  "homepage": "https://amruta907.github.io/smart-grievance-system/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

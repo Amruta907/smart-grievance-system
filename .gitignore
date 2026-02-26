@@ -3,3 +3,9 @@ client/node_modules/
 .env
 dist/
 build/
+client/dist/
+data/
+uploads/
+*.tsbuildinfo
+client/vite.config.js
+client/vite.config.d.ts
